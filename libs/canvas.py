@@ -12,6 +12,9 @@ except ImportError:
 from libs.shape import Shape
 from libs.utils import distance
 
+from data.gsd import GSD_LUT
+from os import path as osp
+
 CURSOR_DEFAULT = Qt.ArrowCursor
 CURSOR_POINT = Qt.PointingHandCursor
 CURSOR_DRAW = Qt.CrossCursor
@@ -31,7 +34,7 @@ class Canvas(QWidget):
 
     CREATE, EDIT = list(range(2))
 
-    epsilon = 11.0
+    epsilon = 11
 
     def __init__(self, *args, **kwargs):
         super(Canvas, self).__init__(*args, **kwargs)
@@ -119,11 +122,21 @@ class Canvas(QWidget):
         if self.drawing():
             self.override_cursor(CURSOR_DRAW)
             if self.current:
-                # Display annotation width and height while drawing
+                self.current.imgName = self.imgName
+                # Display annotation width and height while drawing on the right-bottom panel.
                 current_width = abs(self.current[0].x() - pos.x())
                 current_height = abs(self.current[0].y() - pos.y())
-                self.parent().window().label_coordinates.setText(
-                        'Width: %d, Height: %d / X: %d; Y: %d' % (current_width, current_height, pos.x(), pos.y()))
+                # by sjhong
+                try:
+                    scene = '_'.join(osp.basename(self.imgName).split('_')[:5])
+                    gsd = GSD_LUT[scene]
+                    width = current_width * gsd['width']
+                    height = current_height * gsd['height']
+                    self.parent().window().label_coordinates.setText('width : {:.2f} m / height : {:.2f} m'
+                                                                     .format(width, height))
+                except:
+                    self.parent().window().label_coordinates.setText('width : {:.0f} pix. / height : {:.0f} pix.'
+                                                                     .format(current_width, current_height))
 
                 color = self.drawing_line_color
                 if self.out_of_pixmap(pos):
@@ -192,15 +205,15 @@ class Canvas(QWidget):
                 self.update()
             return
 
-        # Just hovering over the canvas, 2 possibilities:
-        # - Highlight shapes
-        # - Highlight vertex
-        # Update shape/vertex fill and tooltip value accordingly.
+        # # Just hovering over the canvas, 2 possibilities:
+        # # - Highlight shapes
+        # # - Highlight vertex
+        # # Update shape/vertex fill and tooltip value accordingly.
         self.setToolTip("Image")
         for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
             # Look for a nearby vertex to highlight. If that fails,
             # check if we happen to be inside a shape.
-            index = shape.nearest_vertex(pos, self.epsilon)
+            index = shape.nearest_vertex(pos, 3)
             if index is not None:
                 if self.selected_vertex():
                     self.h_shape.highlight_clear()
@@ -215,18 +228,14 @@ class Canvas(QWidget):
                 if self.selected_vertex():
                     self.h_shape.highlight_clear()
                 self.h_vertex, self.h_shape = None, shape
-                self.setToolTip(
-                    "Click & drag to move shape '%s'" % shape.label)
-                self.setStatusTip(self.toolTip())
                 self.override_cursor(CURSOR_GRAB)
-                self.update()
                 break
-        else:  # Nothing found, clear highlights, reset state.
-            if self.h_shape:
-                self.h_shape.highlight_clear()
-                self.update()
-            self.h_vertex, self.h_shape = None, None
-            self.override_cursor(CURSOR_DEFAULT)
+            else:  # Nothing found, clear highlights, reset state.
+                if self.h_shape:
+                    self.h_shape.highlight_clear()
+                    self.update()
+                self.h_vertex, self.h_shape = None, None
+                self.override_cursor(CURSOR_DEFAULT)
 
     def mousePressEvent(self, ev):
         pos = self.transform_pos(ev.pos())
@@ -439,10 +448,13 @@ class Canvas(QWidget):
     def delete_selected(self):
         if self.selected_shape:
             shape = self.selected_shape
-            self.shapes.remove(self.selected_shape)
-            self.selected_shape = None
-            self.update()
-            return shape
+            try:  # by sjhong 6/11
+                self.shapes.remove(self.selected_shape)
+                self.selected_shape = None
+                self.update()
+                return shape
+            except:
+                return None
 
     def copy_selected_shape(self):
         if self.selected_shape:
@@ -502,7 +514,7 @@ class Canvas(QWidget):
             p.drawRect(left_top.x(), left_top.y(), rect_width, rect_height)
 
         if self.drawing() and not self.prev_point.isNull() and not self.out_of_pixmap(self.prev_point):
-            p.setPen(QColor(0, 0, 0))
+            p.setPen(QColor(255, 0, 0))
             p.drawLine(self.prev_point.x(), 0, self.prev_point.x(), self.pixmap.height())
             p.drawLine(0, self.prev_point.y(), self.pixmap.width(), self.prev_point.y())
 
@@ -551,9 +563,6 @@ class Canvas(QWidget):
         self.update()
 
     def close_enough(self, p1, p2):
-        # d = distance(p1 - p2)
-        # m = (p1-p2).manhattanLength()
-        # print "d %.2f, m %d, %.2f" % (d, m, d - m)
         return distance(p1 - p2) < self.epsilon
 
     # These two, along with a call to adjustSize are required for the

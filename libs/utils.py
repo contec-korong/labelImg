@@ -78,12 +78,41 @@ def format_shortcut(text):
 
 
 def generate_color_by_text(text):
-    s = ustr(text)
-    hash_code = int(hashlib.sha256(s.encode('utf-8')).hexdigest(), 16)
-    r = int((hash_code / 255) % 255)
-    g = int((hash_code / 65025) % 255)
-    b = int((hash_code / 16581375) % 255)
-    return QColor(r, g, b, 100)
+    if text == 'SV':
+        r = 255
+        g = 0
+        b = 102
+    elif text == 'LV':
+        r = 0
+        g = 51
+        b = 255
+    elif text == 'BD':
+        r = 0
+        g = 204
+        b = 255
+    elif text == 'APT':
+        r = 255
+        g = 204
+        b = 102
+    elif text == 'SF':
+        r = 0
+        g = 204
+        b = 0
+    elif text == 'TC':
+        r = 255
+        g = 255
+        b = 51
+    elif text == 'BP':
+        r = 153
+        g = 153
+        b = 102
+    else:
+        s = ustr(text)
+        hashCode = int(hashlib.sha256(s.encode('utf-8')).hexdigest(), 16)
+        r = int((hashCode / 255) % 255)
+        g = int((hashCode / 65025) % 255)
+        b = int((hashCode / 16581375) % 255)
+    return QColor(r, g, b, 200)
 
 def have_qstring():
     """p3/qt5 get rid of QString wrapper as py3 has native unicode str type"""
