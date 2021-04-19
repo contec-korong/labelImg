@@ -78,7 +78,7 @@ class MainWindow(QMainWindow, WindowMixin):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
-        # Implement shortcut keys for creating labels - contec
+        # Implement shortcut keys for creating labels
         self.classType = ''
 
         # Load setting in the main thread
@@ -266,10 +266,10 @@ class MainWindow(QMainWindow, WindowMixin):
         edit_mode = action('&Edit\nRectBox', self.set_edit_mode,
                            'Ctrl+J', 'edit', u'Move and edit Boxs', enabled=False)
 
-        # Implement Shortcut keys for creating labels Modified by contec
+        # Implement shortcut keys for creating labels
         create = action(get_str('crtBox'), self.create_shape, 'z', 'new', get_str('crtBoxDetail'), enabled=False)
 
-        """ contec
+        """
         shortcut_classes : Shortcut keys for creating labels
             q : Apartment
             w : Buildings
@@ -799,7 +799,7 @@ class MainWindow(QMainWindow, WindowMixin):
             filename = self.m_img_list[current_index]
             if filename:
                 self.load_file(filename)
-                self.canvas.imgName = filename  # sjhong
+                self.canvas.imgName = filename
 
     # Add chris
     def button_state(self, item=None):
@@ -834,7 +834,7 @@ class MainWindow(QMainWindow, WindowMixin):
             self._no_selection_slot = False
         else:
             shape = self.canvas.selected_shape
-            try:  # by sjhong
+            try:
                 self.shapes_to_items[shape].setSelected(True)
             except:
                 self.label_list.clearSelection()
@@ -870,9 +870,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def load_labels(self, shapes, file_path):
         s = []
         for label, points, line_color, fill_color, difficult in shapes:
-            print('-1')
             shape = Shape(label=label, imgName=file_path)
-            print('1-')
             for x, y in points:
 
                 # Ensure the labels are within the bounds of the image. If not, fix them.
@@ -991,7 +989,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         position MUST be in global coordinates.
         """
-        # Implement shortcut keys for creating labels - contec
+        # Implement shortcut keys for creating labels
         if self.classType:
             text = self.classType
             # Reset(clear) flag
@@ -1110,10 +1108,10 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def load_file(self, file_path=None):
         """Load the specified file, or the last opened file if None."""
-        print('fileName:', file_path.split('/')[-1])  # sjhong
+        print('fileName:', file_path.split('/')[-1])
         self.reset_state()
         self.canvas.setEnabled(False)
-        self.canvas.imgName = file_path  # sjhong
+        self.canvas.imgName = file_path
         if file_path is None:
             file_path = self.settings.get(SETTING_FILENAME)
 
@@ -1170,8 +1168,7 @@ class MainWindow(QMainWindow, WindowMixin):
             self.file_path = unicode_file_path
             self.canvas.load_pixmap(QPixmap.fromImage(image))
             if self.label_file:
-                print('filepath: ', self.file_path)
-                self.load_labels(self.label_file.shapes, self.file_path)  # sjhong
+                self.load_labels(self.label_file.shapes, self.file_path)
             self.set_clean()
             self.canvas.setEnabled(True)
             self.adjust_scale(initial=True)

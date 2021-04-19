@@ -126,7 +126,6 @@ class Canvas(QWidget):
                 # Display annotation width and height while drawing on the right-bottom panel.
                 current_width = abs(self.current[0].x() - pos.x())
                 current_height = abs(self.current[0].y() - pos.y())
-                # by sjhong
                 try:
                     scene = '_'.join(osp.basename(self.imgName).split('_')[:5])
                     gsd = GSD_LUT[scene]
@@ -448,7 +447,7 @@ class Canvas(QWidget):
     def delete_selected(self):
         if self.selected_shape:
             shape = self.selected_shape
-            try:  # by sjhong 6/11
+            try:
                 self.shapes.remove(self.selected_shape)
                 self.selected_shape = None
                 self.update()

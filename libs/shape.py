@@ -114,7 +114,7 @@ class Shape(object):
             painter.drawPath(vertex_path)
             painter.fillPath(vertex_path, self.vertex_fill_color)
 
-            # Draw text at the top-left by sjhong
+            # Draw text at the top-left
             if len(self.points) != 4:
                 pass
             else:
@@ -129,7 +129,7 @@ class Shape(object):
                     else self.points[2].x() + font_size
                 font_y = self.points[0].y() + font_size if self.points[0].y() < self.points[2].y() \
                     else self.points[2].y() + font_size * 1.2
-                # by sjhong
+
                 try:
                     scene = '_'.join(osp.basename(self.imgName).split('_')[:5])
                     gsd = GSD_LUT[scene]
