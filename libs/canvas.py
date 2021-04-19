@@ -350,11 +350,23 @@ class Canvas(QWidget):
             shape.highlight_vertex(index, shape.MOVE_VERTEX)
             self.select_shape(shape)
             return self.h_vertex
+
         for shape in reversed(self.shapes):
-            if self.isVisible(shape) and shape.contains_point(point):
-                self.select_shape(shape)
-                self.calculate_offsets(shape, point)
-                return self.selected_shape
+            if self.isVisible(shape):
+                index = shape.nearest_vertex(point, 3)
+                if index:
+                    self.select_shape(shape)
+                    self.calculate_offsets(shape, point)
+                    self.h_vertex = index
+                    self.h_shape = shape
+                    return self.selected_shape
+
+        for shape in reversed(self.shapes):
+            if self.isVisible(shape):
+                if shape.contains_point(point):
+                    self.select_shape(shape)
+                    self.calculate_offsets(shape, point)
+                    return self.selected_shape
         return None
 
     def calculate_offsets(self, shape, point):
@@ -404,8 +416,6 @@ class Canvas(QWidget):
 
         left_index = (index + 1) % 4
         right_index = (index + 3) % 4
-        left_shift = None
-        right_shift = None
         if index % 2 == 0:
             right_shift = QPointF(shift_pos.x(), 0)
             left_shift = QPointF(0, shift_pos.y())
