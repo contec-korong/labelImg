@@ -1,6 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-
 <file alias="help">resources/icons/help.png</file>
 <file alias="app">resources/icons/app.png</file>
 <file alias="expert">resources/icons/expert2.png</file>
@@ -18,9 +17,8 @@
 <file alias="edit">resources/icons/edit.png</file>
 <file alias="open">resources/icons/open.png</file>
 <file alias="save">resources/icons/save.png</file>
+<file alias="format_coco">resources/icons/format_coco.png</file>
 <file alias="format_voc">resources/icons/format_voc.png</file>
-<file alias="format_yolo">resources/icons/format_yolo.png</file>
-<file alias="format_createml">resources/icons/format_createml.png</file>
 <file alias="save-as">resources/icons/save-as.png</file>
 <file alias="color">resources/icons/color.png</file>
 <file alias="color_line">resources/icons/color_line.png</file>
