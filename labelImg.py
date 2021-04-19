@@ -266,8 +266,7 @@ class MainWindow(QMainWindow, WindowMixin):
         edit_mode = action('&Edit\nRectBox', self.set_edit_mode,
                            'Ctrl+J', 'edit', u'Move and edit Boxs', enabled=False)
 
-        # Implement shortcut keys for creating labels
-        create = action(get_str('crtBox'), self.create_shape, 'z', 'new', get_str('crtBoxDetail'), enabled=False)
+        show_box_size = action('Box size', self.show_box_size, 'h', 'new', 'Show bbox size', enabled=False)
 
         """
         shortcut_classes : Shortcut keys for creating labels
@@ -377,7 +376,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Store actions for further handling
         self.actions = Struct(save=save, save_format=save_format, saveAs=save_as, open=open, close=close,
-                              resetAll=reset_all, deleteImg=delete_image, lineColor=color1, create=create,
+                              resetAll=reset_all, deleteImg=delete_image, lineColor=color1, show_box_size=show_box_size,
                               create_APT=create_APT, create_BD=create_BD, create_SF=create_SF, create_BP=create_BP,
                               create_TC=create_TC, create_LV=create_LV, create_SV=create_SV,
                               delete=delete, edit=edit, copy=copy,
@@ -389,11 +388,11 @@ class MainWindow(QMainWindow, WindowMixin):
                               fileMenuActions=(open, open_dir, save, save_as, close, reset_all, quit),
                               beginner=(), advanced=(),
                               editMenu=(edit, copy, delete, None, color1, self.draw_squares_option),
-                              beginnerContext=(create, create_APT, create_BD, create_SF, create_BP, create_TC, create_LV,
-                                               create_SV, edit, copy, delete),
+                              beginnerContext=(show_box_size, create_APT, create_BD, create_SF, create_BP, create_TC,
+                                               create_LV, create_SV, edit, copy, delete),
                               advancedContext=(create_mode, edit_mode, edit, copy,
                                                delete, shape_line_color, shape_fill_color),
-                              onLoadActive=(close, create, create_mode, edit_mode),
+                              onLoadActive=(close, show_box_size, create_mode, edit_mode),
                               onShapesPresent=(save_as, hide_all, show_all))
 
         self.menus = Struct(
@@ -440,8 +439,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (open, open_dir, change_save_dir, open_next_image, open_prev_image, verify, save,
                                  save_format, None,
-                                 create, create_APT, create_BD, create_SF, create_BP, create_TC, create_LV, create_SV,
-                                 copy, delete, None, zoom_in, zoom, zoom_out, fit_window, fit_width)
+                                 show_box_size, create_APT, create_BD, create_SF, create_BP, create_TC, create_LV,
+                                 create_SV, copy, delete, None, zoom_in, zoom, zoom_out, fit_window, fit_width)
 
         self.actions.advanced = (open, open_dir, change_save_dir, open_next_image, open_prev_image, save, save_format,
                                  None, create_mode, edit_mode, None, hide_all, show_all)
@@ -591,7 +590,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.menus[0].clear()
         add_actions(self.canvas.menus[0], menu)
         self.menus.edit.clear()
-        actions = (self.actions.create, self.actions.create_APT, self.actions.create_BD, self.actions.create_SF,
+        actions = (self.actions.show_box_size, self.actions.create_APT, self.actions.create_BD, self.actions.create_SF,
                    self.actions.create_BP, self.actions.create_TC, self.actions.create_SV, self.actions.create_LV)\
             if self.beginner() else (self.actions.createMode, self.actions.editMode)
         add_actions(self.menus.edit, actions + self.actions.editMenu)
@@ -611,7 +610,6 @@ class MainWindow(QMainWindow, WindowMixin):
     def set_clean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
-        self.actions.create.setEnabled(True)
         self.actions.create_APT.setEnabled(True)
         self.actions.create_BD.setEnabled(True)
         self.actions.create_SF.setEnabled(True)
@@ -682,10 +680,10 @@ class MainWindow(QMainWindow, WindowMixin):
         msg = u'Name:{0} \nApp Version:{1} \n{2} '.format(__appname__, __version__, sys.version_info)
         QMessageBox.information(self, u'Information', msg)
 
-    def create_shape(self):
-        assert self.beginner()
-        self.canvas.set_editing(False)
-        self.actions.create.setEnabled(False)
+    def show_box_size(self):
+        for item, shape in self.items_to_shapes.items():
+            shape.show_box_size = not shape.show_box_size
+        self.canvas.update()
 
     def create_shape_APT(self):
         self.classType = 'APT'
@@ -737,7 +735,6 @@ class MainWindow(QMainWindow, WindowMixin):
             print('Cancel creation.')
             self.canvas.set_editing(True)
             self.canvas.restore_cursor()
-            self.actions.create.setEnabled(True)
             self.actions.create_APT.setEnabled(True)
             self.actions.create_BD.setEnabled(True)
             self.actions.create_SF.setEnabled(True)
@@ -1006,7 +1003,6 @@ class MainWindow(QMainWindow, WindowMixin):
             self.add_label(shape)
             if self.beginner():  # Switch to edit mode.
                 self.canvas.set_editing(True)
-                self.actions.create.setEnabled(True)
                 self.actions.create_APT.setEnabled(True)
                 self.actions.create_BD.setEnabled(True)
                 self.actions.create_SF.setEnabled(True)

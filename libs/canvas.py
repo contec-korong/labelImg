@@ -66,6 +66,7 @@ class Canvas(QWidget):
         self.setFocusPolicy(Qt.WheelFocus)
         self.verified = False
         self.draw_square = False
+        self.show_box_size = True
 
         # initialisation for panning
         self.pan_initial_pos = QPoint()

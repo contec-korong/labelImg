@@ -40,7 +40,7 @@ class Shape(object):
     scale = 1.0
     label_font_size = 8
 
-    def __init__(self, label=None, imgName = None, line_color=None, difficult=False, paint_label=False):
+    def __init__(self, label=None, imgName=None, show_box_size=True, line_color=None, difficult=False, paint_label=False):
         self.label = label
         self.points = []
         self.fill = False
@@ -48,6 +48,7 @@ class Shape(object):
         self.difficult = difficult
         self.paint_label = paint_label
         self.imgName = imgName
+        self.show_box_size = show_box_size
 
         self._highlight_index = None
         self._highlight_mode = self.NEAR_VERTEX
@@ -114,32 +115,35 @@ class Shape(object):
             painter.drawPath(vertex_path)
             painter.fillPath(vertex_path, self.vertex_fill_color)
 
-            # Draw text at the top-left
-            if len(self.points) != 4:
-                pass
-            else:
-                width = abs(round(self.points[2].x()-self.points[0].x(), 1))
-                height = abs(round(self.points[2].y()-self.points[0].y(), 1))
-                font = QFont()
-                font_size = width/15 if width < height else height/15
-                font.setPointSize(font_size)
-                font.setBold(False)
-                painter.setFont(font)
-                font_x = self.points[0].x() + font_size if self.points[0].x() < self.points[2].x() \
-                    else self.points[2].x() + font_size
-                font_y = self.points[0].y() + font_size if self.points[0].y() < self.points[2].y() \
-                    else self.points[2].y() + font_size * 1.2
+            if self.show_box_size:
+                # Draw text at the top-left
+                if len(self.points) != 4:
+                    pass
+                else:
+                    width = abs(round(self.points[2].x()-self.points[0].x(), 1))
+                    height = abs(round(self.points[2].y()-self.points[0].y(), 1))
+                    font = QFont()
+                    font_size = width/15 if width < height else height/15
+                    if font_size < 3:
+                        font_size = 3
+                    font.setPointSize(font_size)
+                    font.setBold(False)
+                    painter.setFont(font)
+                    font_x = self.points[0].x() + font_size if self.points[0].x() < self.points[2].x() \
+                        else self.points[2].x() + font_size
+                    font_y = self.points[0].y() + font_size if self.points[0].y() < self.points[2].y() \
+                        else self.points[2].y() + font_size * 1.2
 
-                try:
-                    scene = '_'.join(osp.basename(self.imgName).split('_')[:5])
-                    gsd = GSD_LUT[scene]
-                    width = width * gsd['width']
-                    height = height * gsd['height']
-                    painter.drawText(font_x, font_y, 'width : {:.2f} m'.format(width))
-                    painter.drawText(font_x, font_y + font_size * 1.2, 'height : {:.2f} m'.format(height))
-                except Exception as e:
-                    painter.drawText(font_x, font_y, 'width : {} pix.'.format(width))
-                    painter.drawText(font_x, font_y + font_size * 1.2, 'height : {} pix.'.format(height))
+                    try:
+                        scene = '_'.join(osp.basename(self.imgName).split('_')[:5])
+                        gsd = GSD_LUT[scene]
+                        width = width * gsd['width']
+                        height = height * gsd['height']
+                        painter.drawText(font_x, font_y, 'width : {:.2f} m'.format(width))
+                        painter.drawText(font_x, font_y + font_size * 1.2, 'height : {:.2f} m'.format(height))
+                    except Exception as e:
+                        painter.drawText(font_x, font_y, 'width : {} pix.'.format(width))
+                        painter.drawText(font_x, font_y + font_size * 1.2, 'height : {} pix.'.format(height))
 
             if self.fill:
                 color = self.select_fill_color if self.selected else self.fill_color
