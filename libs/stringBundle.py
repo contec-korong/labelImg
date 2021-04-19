@@ -21,13 +21,7 @@ class StringBundle:
 
     def __init__(self, create_key, locale_str):
         assert(create_key == StringBundle.__create_key), "StringBundle must be created using StringBundle.getBundle"
-        self.id_to_message = {'crtSVBox': 'Create SV RectBox',
-                              'crtLVBox': 'Create LV RectBox',
-                              'crtBDBox': 'Create BD RectBox',
-                              'crtAPTBox': 'Create APT RectBox',
-                              'crtSFBox': 'Create SF RectBox',
-                              'crtTCBox': 'Create TC RectBox',
-                              'crtBPBox': 'Create BP RectBox'}
+        self.id_to_message = {}
         paths = self.__create_lookup_fallback_list(locale_str)
         for path in paths:
             self.__load_bundle(path)

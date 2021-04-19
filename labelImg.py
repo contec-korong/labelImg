@@ -262,7 +262,7 @@ class MainWindow(QMainWindow, WindowMixin):
                         'Ctrl+L', 'color_line', get_str('boxLineColorDetail'))
 
         create_mode = action(get_str('crtBox'), self.set_create_mode,
-                             'w', 'new', get_str('crtBoxDetail'), enabled=False)
+                             'w', 'new', 'Draw bbox', enabled=False)
         edit_mode = action('&Edit\nRectBox', self.set_edit_mode,
                            'Ctrl+J', 'edit', u'Move and edit Boxs', enabled=False)
 
@@ -280,19 +280,19 @@ class MainWindow(QMainWindow, WindowMixin):
             3 : Tennis court
         """
         # Apartment label
-        create_APT = action(get_str('crtAPTBox'), self.create_shape_APT, 'q', 'new', get_str('crtBoxDetail'), enabled=False)
+        create_APT = action('APT', self.create_shape_APT, 'q', 'new', 'Draw APT bbox', enabled=False)
         # Buildings label
-        create_BD = action(get_str('crtBDBox'), self.create_shape_BD, 'w', 'new', get_str('crtBoxDetail'), enabled=False)
+        create_BD = action('BD', self.create_shape_BD, 'w', 'new', 'Draw BD bbox', enabled=False)
         # Soccer field label
-        create_SF = action(get_str('crtSFBox'), self.create_shape_SF, '1', 'new', get_str('crtBoxDetail'), enabled=False)
+        create_SF = action('SF', self.create_shape_SF, '1', 'new', 'Draw SF bbox', enabled=False)
         # Baseball park label
-        create_BP = action(get_str('crtBPBox'), self.create_shape_BP, '2', 'new', get_str('crtBoxDetail'), enabled=False)
+        create_BP = action('BP', self.create_shape_BP, '2', 'new', 'Draw BP bbox', enabled=False)
         # Tennis court label
-        create_TC = action(get_str('crtTCBox'), self.create_shape_TC, '3', 'new', get_str('crtBoxDetail'), enabled=False)
+        create_TC = action('TC', self.create_shape_TC, '3', 'new', 'Draw TC bbox', enabled=False)
         # Large vehicle label
-        create_LV = action(get_str('crtLVBox'), self.create_shape_LV, 'e', 'new', get_str('crtBoxDetail'), enabled=False)
+        create_LV = action('LV', self.create_shape_LV, 'e', 'new', 'Draw LV bbox', enabled=False)
         # Small vehicle label
-        create_SV = action(get_str('crtSVBox'), self.create_shape_SV, 'r', 'new', get_str('crtBoxDetail'), enabled=False)
+        create_SV = action('SV', self.create_shape_SV, 'r', 'new', 'Draw SV bbox', enabled=False)
 
         delete = action(get_str('delBox'), self.delete_selected_shape,
                         's', 'delete', get_str('delBoxDetail'), enabled=False)
