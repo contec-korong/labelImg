@@ -40,14 +40,14 @@ class Shape(object):
     scale = 1.0
     label_font_size = 8
 
-    def __init__(self, label=None, imgName=None, show_box_size=True, line_color=None, difficult=False, paint_label=False):
+    def __init__(self, label=None, img_name=None, show_box_size=True, line_color=None, difficult=False, paint_label=False):
         self.label = label
         self.points = []
         self.fill = False
         self.selected = False
         self.difficult = difficult
         self.paint_label = paint_label
-        self.imgName = imgName
+        self.img_name = img_name
         self.show_box_size = show_box_size
 
         self._highlight_index = None
@@ -135,7 +135,7 @@ class Shape(object):
                         else self.points[2].y() + font_size * 1.2
 
                     try:
-                        scene = '_'.join(osp.basename(self.imgName).split('_')[:5])
+                        scene = '_'.join(osp.basename(self.img_name).split('_')[:5])
                         gsd = GSD_LUT[scene]
                         width = width * gsd['width']
                         height = height * gsd['height']

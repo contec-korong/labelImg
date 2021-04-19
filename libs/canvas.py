@@ -123,12 +123,12 @@ class Canvas(QWidget):
         if self.drawing():
             self.override_cursor(CURSOR_DRAW)
             if self.current:
-                self.current.imgName = self.imgName
+                self.current.img_name = self.img_name
                 # Display annotation width and height while drawing on the right-bottom panel.
                 current_width = abs(self.current[0].x() - pos.x())
                 current_height = abs(self.current[0].y() - pos.y())
                 try:
-                    scene = '_'.join(osp.basename(self.imgName).split('_')[:5])
+                    scene = '_'.join(osp.basename(self.img_name).split('_')[:5])
                     gsd = GSD_LUT[scene]
                     width = current_width * gsd['width']
                     height = current_height * gsd['height']

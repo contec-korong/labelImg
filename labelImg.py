@@ -796,7 +796,7 @@ class MainWindow(QMainWindow, WindowMixin):
             filename = self.m_img_list[current_index]
             if filename:
                 self.load_file(filename)
-                self.canvas.imgName = filename
+                self.canvas.img_name = filename
 
     # Add chris
     def button_state(self, item=None):
@@ -867,7 +867,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def load_labels(self, shapes, file_path):
         s = []
         for label, points, line_color, fill_color, difficult in shapes:
-            shape = Shape(label=label, imgName=file_path)
+            shape = Shape(label=label, img_name=file_path)
             for x, y in points:
 
                 # Ensure the labels are within the bounds of the image. If not, fix them.
@@ -1107,7 +1107,7 @@ class MainWindow(QMainWindow, WindowMixin):
         print('fileName:', file_path.split('/')[-1])
         self.reset_state()
         self.canvas.setEnabled(False)
-        self.canvas.imgName = file_path
+        self.canvas.img_name = file_path
         if file_path is None:
             file_path = self.settings.get(SETTING_FILENAME)
 
