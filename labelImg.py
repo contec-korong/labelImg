@@ -79,7 +79,6 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Load setting in the main thread
         self.settings = Settings()
-        self.settings.load()
         settings = self.settings
 
         # Load string bundle for i18n
