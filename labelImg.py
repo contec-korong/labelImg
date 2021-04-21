@@ -259,7 +259,7 @@ class MainWindow(QMainWindow, WindowMixin):
         edit_mode = action('&Edit\nRectBox', self.set_edit_mode,
                            'Ctrl+J', 'edit', u'Move and edit Boxs', enabled=False)
 
-        show_box_size = action('Show box size', self.show_box_size, 'h', 'new', 'Show bbox size', enabled=False)
+        show_box_size = action('Show box size', self.show_box_size, 'h', '', 'Show bbox size', enabled=False)
 
         """
         shortcut_classes : Shortcut keys for creating labels
