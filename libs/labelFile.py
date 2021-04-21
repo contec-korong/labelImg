@@ -15,8 +15,8 @@ import sys
 
 
 class LabelFileFormat(Enum):
-    COCO = 1
-    PASCAL_VOC = 2
+    PASCAL_VOC = 1
+    COCO = 2
 
 
 class LabelFileError(Exception):

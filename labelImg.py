@@ -87,7 +87,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Save as Pascal voc xml
         self.default_save_dir = default_save_dir
-        self.label_file_format = settings.get(SETTING_LABEL_FILE_FORMAT, LabelFileFormat.COCO)
+        self.label_file_format = settings.get(SETTING_LABEL_FILE_FORMAT, LabelFileFormat.PASCAL_VOC)
 
         # For loading all image under a directory
         self.m_img_list = []
@@ -529,16 +529,16 @@ class MainWindow(QMainWindow, WindowMixin):
 
     # Support Functions #
     def set_format(self, save_format):
-        if save_format == FORMAT_COCO:
-            self.actions.save_format.setText(FORMAT_COCO)
-            self.actions.save_format.setIcon(new_icon("format_coco"))
-            self.label_file_format = LabelFileFormat.COCO
-            LabelFile.suffix = XML_EXT
-
-        elif save_format == FORMAT_PASCALVOC:
+        if save_format == FORMAT_PASCALVOC:
             self.actions.save_format.setText(FORMAT_PASCALVOC)
             self.actions.save_format.setIcon(new_icon("format_voc"))
             self.label_file_format = LabelFileFormat.PASCAL_VOC
+            LabelFile.suffix = XML_EXT
+
+        elif save_format == FORMAT_COCO:
+            self.actions.save_format.setText(FORMAT_COCO)
+            self.actions.save_format.setIcon(new_icon("format_coco"))
+            self.label_file_format = LabelFileFormat.COCO
             LabelFile.suffix = XML_EXT
 
     def change_format(self):
@@ -907,17 +907,17 @@ class MainWindow(QMainWindow, WindowMixin):
         shapes = [format_shape(shape) for shape in self.canvas.shapes]
         # Can add different annotation formats here
         try:
-            if self.label_file_format == LabelFileFormat.COCO:
-                if annotation_file_path[-4:].lower() != ".xml":
-                    annotation_file_path += XML_EXT
-                self.label_file.save_coco_format(annotation_file_path, shapes, self.file_path, self.image_data,
-                                                 self.line_color.getRgb(), self.fill_color.getRgb())
-
-            elif self.label_file_format == LabelFileFormat.PASCAL_VOC:
+            if self.label_file_format == LabelFileFormat.PASCAL_VOC:
                 if annotation_file_path[-4:].lower() != ".xml":
                     annotation_file_path += XML_EXT
                 self.label_file.save_pascal_voc_format(annotation_file_path, shapes, self.file_path, self.image_data,
                                                        self.line_color.getRgb(), self.fill_color.getRgb())
+
+            elif self.label_file_format == LabelFileFormat.COCO:
+                if annotation_file_path[-4:].lower() != ".xml":
+                    annotation_file_path += XML_EXT
+                self.label_file.save_coco_format(annotation_file_path, shapes, self.file_path, self.image_data,
+                                                 self.line_color.getRgb(), self.fill_color.getRgb())
 
             else:
                 raise Exception('COCO and PASCAL_VOC are only supported')
@@ -1174,18 +1174,18 @@ class MainWindow(QMainWindow, WindowMixin):
             """
 
             if os.path.isfile(xml_path):
-                if self.label_file_format == LabelFileFormat.COCO:
-                    self.load_coco_xml_by_filename(xml_path)
-                elif self.label_file_format == LabelFileFormat.PASCAL_VOC:
+                if self.label_file_format == LabelFileFormat.PASCAL_VOC:
                     self.load_pascal_xml_by_filename(xml_path)
+                elif self.label_file_format == LabelFileFormat.COCO:
+                    self.load_coco_xml_by_filename(xml_path)
 
         else:
             xml_path = os.path.splitext(file_path)[0] + XML_EXT
             if os.path.isfile(xml_path):
-                if self.label_file_format == LabelFileFormat.COCO:
-                    self.load_coco_xml_by_filename(xml_path)
-                elif self.label_file_format == LabelFileFormat.PASCAL_VOC:
+                if self.label_file_format == LabelFileFormat.PASCAL_VOC:
                     self.load_pascal_xml_by_filename(xml_path)
+                elif self.label_file_format == LabelFileFormat.COCO:
+                    self.load_coco_xml_by_filename(xml_path)
 
     def resizeEvent(self, event):
         if self.canvas and not self.image.isNull()\
