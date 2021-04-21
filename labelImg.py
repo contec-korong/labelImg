@@ -195,8 +195,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
         self.file_dock.setFeatures(QDockWidget.DockWidgetFloatable)
 
-        self.dock_features = QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetFloatable
-        self.dock.setFeatures(self.dock.features() ^ int(self.dock_features))
+        self.dock_features = int(QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetFloatable)
+        self.dock.setFeatures(self.dock.features() ^ self.dock_features)
 
         # Actions
         action = partial(new_action, self)
@@ -1004,7 +1004,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def scroll_request(self, delta, orientation):
         units = - delta / (8 * 15)
         bar = self.scroll_bars[orientation]
-        bar.setValue(bar.value() + bar.singleStep() * units)
+        bar.setValue(int(bar.value() + bar.singleStep() * units))
 
     def set_zoom(self, value):
         self.actions.fitWidth.setChecked(False)
