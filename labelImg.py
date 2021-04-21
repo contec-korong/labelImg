@@ -240,7 +240,7 @@ class MainWindow(QMainWindow, WindowMixin):
         save_format = action(get_format_meta(self.label_file_format)[0],
                              self.change_format, 'Ctrl+',
                              get_format_meta(self.label_file_format)[1],
-                             get_str('changeSaveFormat'), enabled=True)
+                             get_str('changeSaveFormat'), enabled=False)
 
         save_as = action(get_str('saveAs'), self.save_file_as,
                          'Ctrl+Shift+S', 'save-as', get_str('saveAsDetail'), enabled=False)
