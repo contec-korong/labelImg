@@ -40,7 +40,7 @@ class Shape(object):
     scale = 1.0
     label_font_size = 8
 
-    def __init__(self, label=None, img_name=None, show_box_size=True, line_color=None, difficult=False, paint_label=False):
+    def __init__(self, label=None, img_name=None, show_box_size=False, line_color=None, difficult=False, paint_label=False):
         self.label = label
         self.points = []
         self.fill = False
@@ -129,21 +129,21 @@ class Shape(object):
                     font.setPointSize(font_size)
                     font.setBold(False)
                     painter.setFont(font)
-                    font_x = self.points[0].x() + font_size if self.points[0].x() < self.points[2].x() \
-                        else self.points[2].x() + font_size
-                    font_y = self.points[0].y() + font_size if self.points[0].y() < self.points[2].y() \
-                        else self.points[2].y() + font_size * 1.2
+
+                    font_x = self.points[0].x() if self.points[0].x() < self.points[2].x() else self.points[2].x()
+                    font_y = self.points[0].y() if self.points[0].y() < self.points[2].y() else self.points[2].y()
 
                     try:
                         scene = '_'.join(osp.basename(self.img_name).split('_')[:5])
                         gsd = GSD_LUT[scene]
                         width = width * gsd['width']
                         height = height * gsd['height']
-                        painter.drawText(font_x, font_y, 'width : {:.2f} m'.format(width))
-                        painter.drawText(font_x, font_y + font_size * 1.2, 'height : {:.2f} m'.format(height))
+                        painter.drawText(font_x, font_y, '{:.1f} m x {:.1f} m'.format(width, height))  ###
+                        # painter.drawText(font_x, font_y, 'width : {:.1f} m'.format(width))
+                        # painter.drawText(font_x, font_y + font_size * 1.2, 'height : {:.1f} m'.format(height))
                     except Exception as e:
                         painter.drawText(font_x, font_y, 'width : {} pix.'.format(width))
-                        painter.drawText(font_x, font_y + font_size * 1.2, 'height : {} pix.'.format(height))
+                        # painter.drawText(font_x, font_y + font_size * 1.2, 'height : {} pix.'.format(height))
 
             if self.fill:
                 color = self.select_fill_color if self.selected else self.fill_color
