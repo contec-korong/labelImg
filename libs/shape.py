@@ -138,12 +138,9 @@ class Shape(object):
                         gsd = GSD_LUT[scene]
                         width = width * gsd['width']
                         height = height * gsd['height']
-                        painter.drawText(font_x, font_y, '{:.1f} m x {:.1f} m'.format(width, height))  ###
-                        # painter.drawText(font_x, font_y, 'width : {:.1f} m'.format(width))
-                        # painter.drawText(font_x, font_y + font_size * 1.2, 'height : {:.1f} m'.format(height))
+                        painter.drawText(font_x, font_y, '{:.1f} m x {:.1f} m'.format(width, height))
                     except Exception as e:
                         painter.drawText(font_x, font_y, 'width : {} pix.'.format(width))
-                        # painter.drawText(font_x, font_y + font_size * 1.2, 'height : {} pix.'.format(height))
 
             if self.fill:
                 color = self.select_fill_color if self.selected else self.fill_color
