@@ -9,7 +9,7 @@ import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 NAME = 'labelImg'
-REQUIRES_PYTHON = '>=3.0.0'
+REQUIRED_PYTHON = '>=3.0.0'
 REQUIRED_DEP = ['pyqt5', 'lxml']
 about = {}
 
@@ -24,10 +24,7 @@ with open("HISTORY.rst", "rb") as history_file:
 
 # OS specific settings
 SET_REQUIRES = []
-if _platform == "linux" or _platform == "linux2":
-   # linux
-   print('linux')
-elif _platform == "darwin":
+if _platform == "darwin":
    # MAC OS X
    SET_REQUIRES.append('py2app')
 
@@ -40,10 +37,11 @@ OPTIONS = {
     'iconfile': 'resources/icons/app.icns'
 }
 
+
 class UploadCommand(Command):
     """Support setup.py upload."""
 
-    description=readme + '\n\n' + history,
+    description = readme + '\n\n' + history,
 
     user_options = []
 
@@ -90,16 +88,16 @@ setup(
     author="TzuTa Lin",
     author_email='tzu.ta.lin@gmail.com',
     url='https://github.com/tzutalin/labelImg',
-    python_requires=REQUIRES_PYTHON,
+    python_requires=REQUIRED_PYTHON,
     package_dir={'labelImg': '.'},
     packages=required_packages,
+    install_requires=REQUIRED_DEP,
     entry_points={
         'console_scripts': [
             'labelImg=labelImg.labelImg:main'
         ]
     },
     include_package_data=True,
-    install_requires=REQUIRED_DEP,
     license="MIT license",
     zip_safe=False,
     keywords='labelImg labelTool development annotation deeplearning',
