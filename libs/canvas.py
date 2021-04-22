@@ -6,8 +6,6 @@ except ImportError:
     from PyQt4.QtGui import *
     from PyQt4.QtCore import *
 
-# from PyQt4.QtOpenGL import *
-
 from libs.shape import Shape, DEFAULT_SELECT_FILL_COLOR
 from libs.utils import distance
 
@@ -19,8 +17,6 @@ CURSOR_POINT = Qt.PointingHandCursor
 CURSOR_DRAW = Qt.CrossCursor
 CURSOR_MOVE = Qt.ClosedHandCursor
 CURSOR_GRAB = Qt.OpenHandCursor
-
-# class Canvas(QGLWidget):
 
 
 class Canvas(QWidget):
