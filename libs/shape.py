@@ -131,7 +131,7 @@ class Shape(QWidget):
                 painter.setFont(font)
 
                 font_x = self.points[0].x() if self.points[0].x() < self.points[2].x() else self.points[2].x()
-                font_y = self.points[0].y() if self.points[0].y() < self.points[2].y() else self.points[2].y()
+                font_y = self.points[0].y() - 1 if self.points[0].y() < self.points[2].y() else self.points[2].y()
 
                 try:
                     scene = '_'.join(osp.basename(self.img_name).split('_')[:5])
