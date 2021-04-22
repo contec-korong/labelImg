@@ -4,6 +4,7 @@
 try:
     from PyQt5.QtGui import *
     from PyQt5.QtCore import *
+    from PyQt5.QtWidgets import QWidget
 except ImportError:
     from PyQt4.QtGui import *
     from PyQt4.QtCore import *
@@ -22,7 +23,7 @@ DEFAULT_VERTEX_FILL_COLOR = QColor(0, 255, 0, 255)
 DEFAULT_HVERTEX_FILL_COLOR = QColor(255, 0, 0)
 
 
-class Shape(object):
+class Shape(QWidget):
     P_SQUARE, P_ROUND = range(2)
 
     MOVE_VERTEX, NEAR_VERTEX = range(2)
@@ -40,14 +41,14 @@ class Shape(object):
     scale = 1.0
     label_font_size = 8
 
-    def __init__(self, label=None, img_name=None, show_box_size=False, line_color=None, difficult=False):
+    def __init__(self, label=None, img_name=None, line_color=None, difficult=False, parent=None):
+        super(Shape, self).__init__(parent=parent)
         self.label = label
         self.points = []
         self.fill = False
         self.selected = False
         self.difficult = difficult
         self.img_name = img_name
-        self.show_box_size = show_box_size
 
         self._highlight_index = None
         self._highlight_mode = self.NEAR_VERTEX
@@ -138,12 +139,12 @@ class Shape(object):
                     width = width * gsd['width']
                     height = height * gsd['height']
                     self.area = width * height
-                    if self.show_box_size:
+                    if self.parent().is_show_box_size:
                         painter.drawText(font_x, font_y, '{:.1f} m x {:.1f} m'.format(width, height))
                 except Exception as e:
                     # If GSD is not given, set 99999 to not delete this shape
                     self.area = 99999
-                    if self.show_box_size:
+                    if self.parent().is_show_box_size:
                         painter.drawText(font_x, font_y, 'width : {} pix.'.format(width))
 
             if self.fill:

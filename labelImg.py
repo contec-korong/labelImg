@@ -175,6 +175,9 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.zoomRequest.connect(self.zoom_request)
         self.canvas.set_drawing_shape_to_square(settings.get(SETTING_DRAW_SQUARE, False))
 
+        # Whether Show box size or not.
+        self.is_show_box_size = False
+
         scroll = QScrollArea()
         scroll.setWidget(self.canvas)
         scroll.setWidgetResizable(True)
@@ -666,8 +669,9 @@ class MainWindow(QMainWindow, WindowMixin):
         QMessageBox.information(self, u'Information', msg)
 
     def show_box_size(self):
+        self.is_show_box_size = not self.is_show_box_size
         for item, shape in self.items_to_shapes.items():
-            shape.show_box_size = not shape.show_box_size
+            shape.show_box_size = self.is_show_box_size
         self.canvas.update()
 
     def create_shape_APT(self):

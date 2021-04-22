@@ -67,7 +67,6 @@ class Canvas(QWidget):
         self.setFocusPolicy(Qt.WheelFocus)
         self.verified = False
         self.draw_square = False
-        self.show_box_size = True
         self.label = None
         self.bd_limit_size = 50
         self.limit_size = 10
@@ -372,7 +371,7 @@ class Canvas(QWidget):
             self.current.add_point(QPointF(min_x, max_y))
             self.finalise()
         elif not self.out_of_pixmap(pos):
-            self.current = Shape()
+            self.current = Shape(parent=self.parent().window())
             self.current.add_point(pos)
             self.line.points = [pos, pos]
             self.set_hiding()
