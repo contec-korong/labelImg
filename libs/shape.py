@@ -40,13 +40,12 @@ class Shape(object):
     scale = 1.0
     label_font_size = 8
 
-    def __init__(self, label=None, img_name=None, show_box_size=False, line_color=None, difficult=False, paint_label=False):
+    def __init__(self, label=None, img_name=None, show_box_size=False, line_color=None, difficult=False):
         self.label = label
         self.points = []
         self.fill = False
         self.selected = False
         self.difficult = difficult
-        self.paint_label = paint_label
         self.img_name = img_name
         self.show_box_size = show_box_size
 
@@ -63,7 +62,7 @@ class Shape(object):
         if line_color is not None:
             # Override the class line_color attribute
             # with an object attribute. Currently this
-            # is used for drawing the pending line a different color.
+            # is used for drawing the pending line with a different color.
             self.line_color = line_color
 
     def close(self):

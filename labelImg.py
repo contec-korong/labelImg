@@ -255,7 +255,7 @@ class MainWindow(QMainWindow, WindowMixin):
                         'Ctrl+L', 'color_line', get_str('boxLineColorDetail'))
 
         create_mode = action(get_str('crtBox'), self.set_create_mode,
-                             'w', 'new', 'Draw bbox', enabled=False)
+                             '', 'new', 'Draw bbox', enabled=False)
         edit_mode = action('&Edit\nRectBox', self.set_edit_mode,
                            'Ctrl+J', 'edit', u'Move and edit Boxs', enabled=False)
 

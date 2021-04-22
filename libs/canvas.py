@@ -1,4 +1,3 @@
-
 try:
     from PyQt5.QtGui import *
     from PyQt5.QtCore import *
@@ -121,8 +120,7 @@ class Canvas(QWidget):
         # Update coordinates in status bar if image is opened
         window = self.parent().window()
         if window.file_path is not None:
-            self.parent().window().label_coordinates.setText(
-                'X: %d; Y: %d' % (pos.x(), pos.y()))
+            self.parent().window().label_coordinates.setText('X: %d; Y: %d' % (pos.x(), pos.y()))
 
         # Polygon drawing.
         if self.drawing():
@@ -143,7 +141,6 @@ class Canvas(QWidget):
                     self.parent().window().label_coordinates.setText('width : {:.0f} pix. / height : {:.0f} pix.'
                                                                      .format(width, height))
 
-                color = self.drawing_line_color
                 if self.out_of_pixmap(pos):
                     # Don't allow the user to draw outside the pixmap.
                     # Clip the coordinates to 0 or max,
@@ -156,7 +153,6 @@ class Canvas(QWidget):
                     # Attract line to starting point and colorise to alert the
                     # user:
                     pos = self.current[0]
-                    color = self.current.line_color
                     self.override_cursor(CURSOR_POINT)
                     self.current.highlight_vertex(0, Shape.NEAR_VERTEX)
 
@@ -297,8 +293,7 @@ class Canvas(QWidget):
         if ev.button() == Qt.RightButton:
             menu = self.menus[bool(self.selected_shape_copy)]
             self.restore_cursor()
-            if not menu.exec_(self.mapToGlobal(ev.pos()))\
-               and self.selected_shape_copy:
+            if not menu.exec_(self.mapToGlobal(ev.pos())) and self.selected_shape_copy:
                 # Cancel the move by deleting the shadow copy.
                 self.selected_shape_copy = None
                 self.repaint()
@@ -686,27 +681,22 @@ class Canvas(QWidget):
             self.move_one_pixel('Down')
 
     def move_one_pixel(self, direction):
-        # print(self.selectedShape.points)
         if direction == 'Left' and not self.move_out_of_bound(QPointF(-1.0, 0)):
-            # print("move Left one pixel")
             self.selected_shape.points[0] += QPointF(-1.0, 0)
             self.selected_shape.points[1] += QPointF(-1.0, 0)
             self.selected_shape.points[2] += QPointF(-1.0, 0)
             self.selected_shape.points[3] += QPointF(-1.0, 0)
         elif direction == 'Right' and not self.move_out_of_bound(QPointF(1.0, 0)):
-            # print("move Right one pixel")
             self.selected_shape.points[0] += QPointF(1.0, 0)
             self.selected_shape.points[1] += QPointF(1.0, 0)
             self.selected_shape.points[2] += QPointF(1.0, 0)
             self.selected_shape.points[3] += QPointF(1.0, 0)
         elif direction == 'Up' and not self.move_out_of_bound(QPointF(0, -1.0)):
-            # print("move Up one pixel")
             self.selected_shape.points[0] += QPointF(0, -1.0)
             self.selected_shape.points[1] += QPointF(0, -1.0)
             self.selected_shape.points[2] += QPointF(0, -1.0)
             self.selected_shape.points[3] += QPointF(0, -1.0)
         elif direction == 'Down' and not self.move_out_of_bound(QPointF(0, 1.0)):
-            # print("move Down one pixel")
             self.selected_shape.points[0] += QPointF(0, 1.0)
             self.selected_shape.points[1] += QPointF(0, 1.0)
             self.selected_shape.points[2] += QPointF(0, 1.0)
