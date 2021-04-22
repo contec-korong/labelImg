@@ -435,8 +435,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (open, open_dir, change_save_dir, open_next_image, open_prev_image, verify, save,
                                  save_format, None,
-                                 show_box_size, create_APT, create_BD, create_SF, create_BP, create_TC, create_LV,
-                                 create_SV, copy, delete, None, zoom_in, zoom, zoom_out, fit_window, fit_width)
+                                 zoom_in, zoom, zoom_out, fit_window, fit_width)
 
         self.actions.advanced = (open, open_dir, change_save_dir, open_next_image, open_prev_image, save, save_format,
                                  None, create_mode, edit_mode, None, hide_all, show_all)
