@@ -1101,6 +1101,8 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def load_file(self, file_path=None):
         """Load the specified file, or the last opened file if None."""
+        if file_path == '':
+            return
         print('fileName:', file_path.split('/')[-1])
         self.reset_state()
         self.canvas.setEnabled(False)
