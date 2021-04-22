@@ -673,42 +673,49 @@ class MainWindow(QMainWindow, WindowMixin):
     def create_shape_APT(self):
         self.classType = 'APT'
         assert self.beginner()
+        self.canvas.label = self.classType
         self.canvas.set_editing(False)
         self.actions.create_APT.setEnabled(False)
 
     def create_shape_BD(self):
         self.classType = 'BD'
         assert self.beginner()
+        self.canvas.label = self.classType
         self.canvas.set_editing(False)
         self.actions.create_BD.setEnabled(False)
 
     def create_shape_SF(self):
         self.classType = 'SF'
         assert self.beginner()
+        self.canvas.label = self.classType
         self.canvas.set_editing(False)
         self.actions.create_SF.setEnabled(False)
 
     def create_shape_BP(self):
         self.classType = 'BP'
         assert self.beginner()
+        self.canvas.label = self.classType
         self.canvas.set_editing(False)
         self.actions.create_BP.setEnabled(False)
 
     def create_shape_TC(self):
         self.classType = 'TC'
         assert self.beginner()
+        self.canvas.label = self.classType
         self.canvas.set_editing(False)
         self.actions.create_TC.setEnabled(False)
 
     def create_shape_LV(self):
         self.classType = 'LV'
         assert self.beginner()
+        self.canvas.label = self.classType
         self.canvas.set_editing(False)
         self.actions.create_LV.setEnabled(False)
 
     def create_shape_SV(self):
         self.classType = 'SV'
         assert self.beginner()
+        self.canvas.label = self.classType
         self.canvas.set_editing(False)
         self.actions.create_SV.setEnabled(False)
 
@@ -847,7 +854,6 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def remove_label(self, shape):
         if shape is None:
-            # print('rm empty label')
             return
         item = self.shapes_to_items[shape]
         self.label_list.takeItem(self.label_list.row(item))

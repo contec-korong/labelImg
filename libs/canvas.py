@@ -9,7 +9,7 @@ except ImportError:
 
 # from PyQt4.QtOpenGL import *
 
-from libs.shape import Shape
+from libs.shape import Shape, DEFAULT_SELECT_FILL_COLOR
 from libs.utils import distance
 
 from data.gsd import GSD_LUT
@@ -44,6 +44,8 @@ class Canvas(QWidget):
         self.current = None
         self.selected_shape = None  # save the selected shape here
         self.selected_shape_copy = None
+        self.drawing_bad_color = QColor(255, 0, 0)
+        self.drawing_bad_fill_color = QColor(255, 0, 0, 155)
         self.drawing_line_color = QColor(0, 0, 255)
         self.drawing_rect_color = QColor(0, 0, 255)
         self.line = Shape(line_color=self.drawing_line_color)
@@ -67,6 +69,9 @@ class Canvas(QWidget):
         self.verified = False
         self.draw_square = False
         self.show_box_size = True
+        self.label = None
+        self.bd_limit_size = 50
+        self.limit_size = 10
 
         # initialisation for panning
         self.pan_initial_pos = QPoint()
@@ -125,18 +130,18 @@ class Canvas(QWidget):
             if self.current:
                 self.current.img_name = self.img_name
                 # Display annotation width and height while drawing on the right-bottom panel.
-                current_width = abs(self.current[0].x() - pos.x())
-                current_height = abs(self.current[0].y() - pos.y())
+                width = abs(self.current[0].x() - pos.x())
+                height = abs(self.current[0].y() - pos.y())
                 try:
                     scene = '_'.join(osp.basename(self.img_name).split('_')[:5])
                     gsd = GSD_LUT[scene]
-                    width = current_width * gsd['width']
-                    height = current_height * gsd['height']
-                    self.parent().window().label_coordinates.setText('width : {:.2f} m / height : {:.2f} m'
+                    width = width * gsd['width']
+                    height = height * gsd['height']
+                    self.parent().window().label_coordinates.setText('width : {:.1f} m / height : {:.1f} m'
                                                                      .format(width, height))
                 except:
                     self.parent().window().label_coordinates.setText('width : {:.0f} pix. / height : {:.0f} pix.'
-                                                                     .format(current_width, current_height))
+                                                                     .format(width, height))
 
                 color = self.drawing_line_color
                 if self.out_of_pixmap(pos):
@@ -166,6 +171,18 @@ class Canvas(QWidget):
                 else:
                     self.line[1] = pos
 
+                if self.label == 'BD':
+                    if width * height < self.bd_limit_size:
+                        color = self.drawing_bad_color
+                    else:
+                        color = self.drawing_line_color
+                else:
+                    if width * height < self.limit_size:
+                        color = self.drawing_bad_color
+                    else:
+                        color = self.drawing_line_color
+
+                self.drawing_rect_color = color
                 self.line.line_color = color
                 self.prev_point = QPointF()
                 self.current.highlight_clear()
@@ -188,6 +205,25 @@ class Canvas(QWidget):
         # Polygon/Vertex moving.
         if Qt.LeftButton & ev.buttons():
             if self.selected_vertex():
+                if self.label == 'BD':
+                    if self.selected_shape.area < self.bd_limit_size:
+                        self.drawing_rect_color = self.drawing_bad_color
+                        self.line.line_color = self.drawing_bad_color
+                        self.selected_shape.select_fill_color = self.drawing_bad_fill_color
+                    else:
+                        self.drawing_rect_color = self.drawing_rect_color
+                        self.line.line_color = self.drawing_line_color
+                        self.selected_shape.select_fill_color = DEFAULT_SELECT_FILL_COLOR
+                else:
+                    if self.selected_shape.area < self.limit_size:
+                        self.drawing_rect_color = self.drawing_bad_color
+                        self.line.line_color = self.drawing_bad_color
+                        self.selected_shape.select_fill_color = self.drawing_bad_fill_color
+                    else:
+                        self.drawing_rect_color = self.drawing_rect_color
+                        self.line.line_color = self.drawing_line_color
+                        self.selected_shape.select_fill_color = DEFAULT_SELECT_FILL_COLOR
+
                 self.bounded_move_vertex(pos)
                 self.shapeMoved.emit()
                 self.repaint()
@@ -269,12 +305,36 @@ class Canvas(QWidget):
         elif ev.button() == Qt.LeftButton and self.selected_shape:
             if self.selected_vertex():
                 self.override_cursor(CURSOR_POINT)
+                if self.label == 'BD' and self.selected_shape.area < self.bd_limit_size:
+                    try:
+                        self.shapes.remove(self.selected_shape)
+                        self.parent().window().remove_label(self.selected_shape)
+                        self.update()
+                    except:
+                        pass
+                # Suppose any box smaller than self.limit_size is wrong box.
+                elif self.selected_shape.area < self.limit_size:
+                    try:
+                        self.parent().window().remove_label(self.selected_shape)
+                        self.shapes.remove(self.selected_shape)
+                        self.update()
+                    except:
+                        pass
             else:
                 self.override_cursor(CURSOR_GRAB)
         elif ev.button() == Qt.LeftButton:
             pos = self.transform_pos(ev.pos())
             if self.drawing():
                 self.handle_drawing(pos)
+                if self.label == 'BD' and self.shapes[-1].area < self.bd_limit_size:
+                    self.parent().window().remove_label(self.shapes[-1])
+                    self.shapes.remove(self.shapes[-1])
+
+                # Suppose any box smaller than self.limit_size is wrong box.
+                elif self.shapes[-1].area < self.limit_size:
+                    self.parent().window().remove_label(self.shapes[-1])
+                    self.shapes.remove(self.shapes[-1])
+
             else:
                 # pan
                 QApplication.restoreOverrideCursor()
