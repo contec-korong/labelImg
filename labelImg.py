@@ -867,7 +867,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def load_labels(self, shapes, file_path):
         s = []
         for label, points, line_color, fill_color, difficult in shapes:
-            shape = Shape(label=label, img_name=file_path)
+            shape = Shape(label=label, img_name=file_path, parent=self)
             for x, y in points:
 
                 # Ensure the labels are within the bounds of the image. If not, fix them.
