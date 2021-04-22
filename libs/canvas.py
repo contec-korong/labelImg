@@ -260,6 +260,7 @@ class Canvas(QWidget):
                     self.h_shape.highlight_clear()
                 self.h_vertex, self.h_shape = None, shape
                 self.override_cursor(CURSOR_GRAB)
+                self.update()
                 break
             else:  # Nothing found, clear highlights, reset state.
                 if self.h_shape:
