@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=labelImg
+Comment=Image bounding box annotation
+Exec=labelImg
+Icon=labelImg.png
+Terminal=false
+Type=Application
+Categories=Graphics;RasterGraphics;
