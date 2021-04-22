@@ -284,6 +284,9 @@ class Canvas(QWidget):
                     QApplication.setOverrideCursor(QCursor(Qt.OpenHandCursor))
                     self.pan_initial_pos = pos
 
+                elif isinstance(selection, Shape):
+                    self.parent().window().label_coordinates.setText('Area: {:.2f} m^2'.format(selection.area))
+
         elif ev.button() == Qt.RightButton and self.editing():
             self.select_shape_point(pos)
             self.prev_point = pos
