@@ -9,7 +9,7 @@ except ImportError:
     from PyQt4.QtGui import *
     from PyQt4.QtCore import *
 
-from data.gsd import GSD_LUT
+from ..data.gsd import GSD_LUT
 from os import path as osp
 
 from libs.utils import distance
