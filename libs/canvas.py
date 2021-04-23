@@ -9,7 +9,7 @@ except ImportError:
 from libs.shape import Shape, DEFAULT_SELECT_FILL_COLOR
 from libs.utils import distance
 
-from ..data.gsd import GSD_LUT
+from data.gsd import GSD_LUT
 from os import path as osp
 
 CURSOR_DEFAULT = Qt.ArrowCursor
