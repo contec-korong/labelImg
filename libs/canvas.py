@@ -301,8 +301,8 @@ class Canvas(QWidget):
                 self.override_cursor(CURSOR_POINT)
                 if self.label == 'BD' and self.selected_shape.area < self.bd_limit_size:
                     try:
-                        self.shapes.remove(self.selected_shape)
                         self.parent().window().remove_label(self.selected_shape)
+                        self.shapes.remove(self.selected_shape)
                         self.update()
                     except:
                         pass
@@ -320,15 +320,17 @@ class Canvas(QWidget):
             pos = self.transform_pos(ev.pos())
             if self.drawing():
                 self.handle_drawing(pos)
+                if len(self.shapes) == 0:
+                    return
                 if self.label == 'BD' and self.shapes[-1].area < self.bd_limit_size:
                     self.parent().window().remove_label(self.shapes[-1])
                     self.shapes.remove(self.shapes[-1])
-
+                    self.update()
                 # Suppose any box smaller than self.limit_size is wrong box.
                 elif self.shapes[-1].area < self.limit_size:
                     self.parent().window().remove_label(self.shapes[-1])
                     self.shapes.remove(self.shapes[-1])
-
+                    self.update()
             else:
                 # pan
                 QApplication.restoreOverrideCursor()
