@@ -9,7 +9,7 @@ except ImportError:
     from PyQt4.QtGui import *
     from PyQt4.QtCore import *
 
-from data.gsd import GSD_LUT
+from data.gsd import GSD_LUT, get_gsd
 from os import path as osp
 
 from libs.utils import distance
@@ -134,18 +134,17 @@ class Shape(QWidget):
                 font_y = self.points[0].y() - 1 if self.points[0].y() < self.points[2].y() else self.points[2].y()
 
                 try:
-                    scene = '_'.join(osp.basename(self.img_name).split('_')[:5])
-                    gsd = GSD_LUT[scene]
+                    gsd = get_gsd(self.img_name)
                     width = width * gsd['width']
                     height = height * gsd['height']
                     self.area = width * height
                     if self.parent().is_show_box_size:
-                        painter.drawText(font_x, font_y, '{:.1f} m x {:.1f} m'.format(width, height))
+                        painter.drawText(font_x, font_y, '{:.1f} x {:.1f} m'.format(width, height))
                 except Exception as e:
                     # If GSD is not given, set 99999 to not delete this shape
                     self.area = 99999
                     if self.parent().is_show_box_size:
-                        painter.drawText(font_x, font_y, 'width : {} pix.'.format(width))
+                        painter.drawText(font_x, font_y, '{:.1f} x {:.1f} pix.'.format(width, height))
 
             if self.fill:
                 color = self.select_fill_color if self.selected else self.fill_color

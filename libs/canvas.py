@@ -9,7 +9,7 @@ except ImportError:
 from libs.shape import Shape, DEFAULT_SELECT_FILL_COLOR
 from libs.utils import distance
 
-from data.gsd import GSD_LUT
+from data.gsd import GSD_LUT, get_gsd
 from os import path as osp
 
 CURSOR_DEFAULT = Qt.ArrowCursor
@@ -126,8 +126,7 @@ class Canvas(QWidget):
                 width = abs(self.current[0].x() - pos.x())
                 height = abs(self.current[0].y() - pos.y())
                 try:
-                    scene = '_'.join(osp.basename(self.img_name).split('_')[:5])
-                    gsd = GSD_LUT[scene]
+                    gsd = get_gsd(self.img_name)
                     width = width * gsd['width']
                     height = height * gsd['height']
                     self.parent().window().label_coordinates.setText('width : {:.1f} m / height : {:.1f} m'
