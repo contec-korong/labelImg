@@ -337,8 +337,7 @@ class Canvas(QWidget):
     def end_move(self, copy=False):
         assert self.selected_shape and self.selected_shape_copy
         shape = self.selected_shape_copy
-        # del shape.fill_color
-        # del shape.line_color
+
         if copy:
             self.shapes.append(shape)
             self.selected_shape.selected = False
@@ -565,6 +564,8 @@ class Canvas(QWidget):
             self.current.paint(p)
             self.line.paint(p)
         if self.selected_shape_copy:
+            self.selected_shape_copy.parent = self.selected_shape.parent
+            self.selected_shape_copy.img_name = self.selected_shape.img_name
             self.selected_shape_copy.paint(p)
 
         # Paint rect
