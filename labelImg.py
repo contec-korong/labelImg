@@ -268,6 +268,7 @@ class MainWindow(QMainWindow, WindowMixin):
         shortcut_classes : Shortcut keys for creating labels
             q : Apartment
             w : Buildings
+            ` : Plastic house
             e : Large vehicle
             r : Small vehicle
             1 : Soccer field
@@ -278,6 +279,8 @@ class MainWindow(QMainWindow, WindowMixin):
         create_APT = action('APT', self.create_shape_APT, 'q', 'new', 'Draw APT bbox', enabled=False)
         # Buildings label
         create_BD = action('BD', self.create_shape_BD, 'w', 'new', 'Draw BD bbox', enabled=False)
+        # Plastic House label
+        create_PH = action('PH', self.create_shape_PH, '`', 'new', 'Draw PH bbox', enabled=False)
         # Soccer field label
         create_SF = action('SF', self.create_shape_SF, '1', 'new', 'Draw SF bbox', enabled=False)
         # Baseball park label
@@ -373,7 +376,7 @@ class MainWindow(QMainWindow, WindowMixin):
         # Store actions for further handling
         self.actions = Struct(save=save, save_format=save_format, saveAs=save_as, open=open, close=close,
                               resetAll=reset_all, deleteImg=delete_image, lineColor=color1, show_box_size=show_box_size,
-                              create_APT=create_APT, create_BD=create_BD, create_SF=create_SF, create_BP=create_BP,
+                              create_APT=create_APT, create_BD=create_BD, create_PH=create_PH, create_SF=create_SF, create_BP=create_BP,
                               create_TC=create_TC, create_LV=create_LV, create_SV=create_SV,
                               delete=delete, edit=edit, copy=copy,
                               createMode=create_mode, editMode=edit_mode, advancedMode=advanced_mode,
@@ -384,7 +387,7 @@ class MainWindow(QMainWindow, WindowMixin):
                               fileMenuActions=(open, open_dir, save, save_as, close, reset_all, quit),
                               beginner=(), advanced=(),
                               editMenu=(edit, copy, delete, None, color1, self.draw_squares_option),
-                              beginnerContext=(show_box_size, create_APT, create_BD, create_SF, create_BP, create_TC,
+                              beginnerContext=(show_box_size, create_APT, create_BD, create_PH, create_SF, create_BP, create_TC,
                                                create_LV, create_SV, edit, copy, delete),
                               advancedContext=(create_mode, edit_mode, edit, copy,
                                                delete, shape_line_color, shape_fill_color),
@@ -577,7 +580,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.menus[0].clear()
         add_actions(self.canvas.menus[0], menu)
         self.menus.edit.clear()
-        actions = (self.actions.show_box_size, self.actions.create_APT, self.actions.create_BD, self.actions.create_SF,
+        actions = (self.actions.show_box_size, self.actions.create_APT, self.actions.create_BD, self.actions.create_PH, self.actions.create_SF,
                    self.actions.create_BP, self.actions.create_TC, self.actions.create_SV, self.actions.create_LV)\
             if self.beginner() else (self.actions.createMode, self.actions.editMode)
         add_actions(self.menus.edit, actions + self.actions.editMenu)
@@ -599,6 +602,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.actions.save.setEnabled(False)
         self.actions.create_APT.setEnabled(True)
         self.actions.create_BD.setEnabled(True)
+        self.actions.create_PH.setEnabled(True)
         self.actions.create_SF.setEnabled(True)
         self.actions.create_BP.setEnabled(True)
         self.actions.create_TC.setEnabled(True)
@@ -687,6 +691,13 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.set_editing(False)
         self.actions.create_BD.setEnabled(False)
 
+    def create_shape_PH(self):
+        self.classType = 'PH'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_PH.setEnabled(False)
+
     def create_shape_SF(self):
         self.classType = 'SF'
         assert self.beginner()
@@ -732,6 +743,7 @@ class MainWindow(QMainWindow, WindowMixin):
             self.canvas.restore_cursor()
             self.actions.create_APT.setEnabled(True)
             self.actions.create_BD.setEnabled(True)
+            self.actions.create_PH.setEnabled(True)
             self.actions.create_SF.setEnabled(True)
             self.actions.create_BP.setEnabled(True)
             self.actions.create_TC.setEnabled(True)
@@ -1001,6 +1013,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.canvas.set_editing(True)
                 self.actions.create_APT.setEnabled(True)
                 self.actions.create_BD.setEnabled(True)
+                self.actions.create_PH.setEnabled(True)
                 self.actions.create_SF.setEnabled(True)
                 self.actions.create_BP.setEnabled(True)
                 self.actions.create_TC.setEnabled(True)

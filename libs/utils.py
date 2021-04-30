@@ -94,6 +94,10 @@ def generate_color_by_text(text):
         r = 255
         g = 204
         b = 102
+    elif text == 'PH':
+        r = 177
+        g = 156
+        b = 217
     elif text == 'SF':
         r = 0
         g = 204
