@@ -357,9 +357,9 @@ class Canvas(QWidget):
     def handle_drawing(self, pos):
         if self.current and self.current.reach_max_points() is False:
             init_pos = self.current[0]
-            min_x = init_pos.x()
+            min_x = init_pos.x()w
             min_y = init_pos.y()
-            target_pos = self.line[1]
+            target_pos = QPointF(256.0 + min_x, 256.0 + min_y)
             max_x = target_pos.x()
             max_y = target_pos.y()
             self.current.add_point(QPointF(max_x, min_y))
