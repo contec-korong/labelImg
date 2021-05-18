@@ -866,6 +866,7 @@ class MainWindow(QMainWindow, WindowMixin):
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
         self.update_combo_box()
+        print(self.label_list.count())
 
     def remove_label(self, shape):
         if shape is None:
