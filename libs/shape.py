@@ -94,7 +94,7 @@ class Shape(QWidget):
             color = self.select_line_color if self.selected else self.line_color
             pen = QPen(color)
             # Try using integer sizes for smoother drawing(?)
-            pen.setWidth(max(1, int(round(2.0 / self.scale))))
+            pen.setWidth(0.5)
             painter.setPen(pen)
 
             line_path = QPainterPath()
@@ -107,7 +107,7 @@ class Shape(QWidget):
             # self.drawVertex(vertex_path, 0)
 
             for i, p in enumerate(self.points):
-                line_path.lineTo(p)
+                line_path.lineTo(p)w
                 self.draw_vertex(vertex_path, i)
             if self.is_closed():
                 line_path.lineTo(self.points[0])
