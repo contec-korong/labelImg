@@ -135,6 +135,7 @@ class Canvas(QWidget):
                     self.parent().window().label_coordinates.setText('width : {:.0f} pix. / height : {:.0f} pix.'
                                                                      .format(width, height))
 
+                color = self.drawing_line_color
                 if self.out_of_pixmap(pos):
                     # Don't allow the user to draw outside the pixmap.
                     # Clip the coordinates to 0 or max,
@@ -161,18 +162,6 @@ class Canvas(QWidget):
                 else:
                     self.line[1] = pos
 
-                if self.label == 'BD':
-                    if width * height < self.bd_limit_size:
-                        color = self.drawing_bad_color
-                    else:
-                        color = self.drawing_line_color
-                else:
-                    if width * height < self.limit_size:
-                        color = self.drawing_bad_color
-                    else:
-                        color = self.drawing_line_color
-
-                self.drawing_rect_color = color
                 self.line.line_color = color
                 self.prev_point = QPointF()
                 self.current.highlight_clear()
@@ -195,25 +184,6 @@ class Canvas(QWidget):
         # Polygon/Vertex moving.
         if Qt.LeftButton & ev.buttons():
             if self.selected_vertex():
-                if self.label == 'BD':
-                    if self.selected_shape.area < self.bd_limit_size:
-                        self.drawing_rect_color = self.drawing_bad_color
-                        self.line.line_color = self.drawing_bad_color
-                        self.selected_shape.select_fill_color = self.drawing_bad_fill_color
-                    else:
-                        self.drawing_rect_color = self.drawing_rect_color
-                        self.line.line_color = self.drawing_line_color
-                        self.selected_shape.select_fill_color = DEFAULT_SELECT_FILL_COLOR
-                else:
-                    if self.selected_shape.area < self.limit_size:
-                        self.drawing_rect_color = self.drawing_bad_color
-                        self.line.line_color = self.drawing_bad_color
-                        self.selected_shape.select_fill_color = self.drawing_bad_fill_color
-                    else:
-                        self.drawing_rect_color = self.drawing_rect_color
-                        self.line.line_color = self.drawing_line_color
-                        self.selected_shape.select_fill_color = DEFAULT_SELECT_FILL_COLOR
-
                 self.bounded_move_vertex(pos)
                 self.shapeMoved.emit()
                 self.repaint()
@@ -297,38 +267,12 @@ class Canvas(QWidget):
         elif ev.button() == Qt.LeftButton and self.selected_shape:
             if self.selected_vertex():
                 self.override_cursor(CURSOR_POINT)
-                if self.label == 'BD' and self.selected_shape.area < self.bd_limit_size:
-                    try:
-                        self.parent().window().remove_label(self.selected_shape)
-                        self.shapes.remove(self.selected_shape)
-                        self.update()
-                    except:
-                        pass
-                # Suppose any box smaller than self.limit_size is wrong box.
-                elif self.selected_shape.area < self.limit_size:
-                    try:
-                        self.parent().window().remove_label(self.selected_shape)
-                        self.shapes.remove(self.selected_shape)
-                        self.update()
-                    except:
-                        pass
             else:
                 self.override_cursor(CURSOR_GRAB)
         elif ev.button() == Qt.LeftButton:
             pos = self.transform_pos(ev.pos())
             if self.drawing():
                 self.handle_drawing(pos)
-                if len(self.shapes) == 0:
-                    return
-                if self.label == 'BD' and self.shapes[-1].area < self.bd_limit_size:
-                    self.parent().window().remove_label(self.shapes[-1])
-                    self.shapes.remove(self.shapes[-1])
-                    self.update()
-                # Suppose any box smaller than self.limit_size is wrong box.
-                elif self.shapes[-1].area < self.limit_size:
-                    self.parent().window().remove_label(self.shapes[-1])
-                    self.shapes.remove(self.shapes[-1])
-                    self.update()
             else:
                 # pan
                 QApplication.restoreOverrideCursor()
