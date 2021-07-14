@@ -78,59 +78,40 @@ def format_shortcut(text):
 
 
 def generate_color_by_text(text):
-    if text == 'SV':
-        r = 255
-        g = 0
-        b = 102
-    elif text == 'LV':
-        r = 0
-        g = 51
-        b = 255
-    elif text == 'BD':
-        r = 0
-        g = 204
-        b = 255
-    elif text == 'APT':
-        r = 255
-        g = 204
-        b = 102
-    elif text == 'PH':
-        r = 177
-        g = 156
-        b = 217
-    elif text == 'SF':
-        r = 0
-        g = 204
-        b = 0
-    elif text == 'TC':
-        r = 255
-        g = 255
-        b = 51
-    elif text == 'BP':
-        r = 153
-        g = 153
-        b = 102
+    # CLASS guideline: https://docs.google.com/document/d/1xSnEFL0XHnNkwhOgClSlMNn7XvdES2bGeo2iZlQ8924/edit
+    color_table = {'CAR': [255, 0, 102], 'TRUCK': [170, 155, 255], 'BUS': [0, 51, 255], 'BD': [0, 204, 255],
+                   'APT': [255, 204, 102], 'PH': [0, 150, 150], 'SF': [0, 204, 0], 'TC': [255, 255, 51],
+                   'BP': [153, 153, 102], 'BC': [195, 60, 60], 'TT': [250, 255, 190], 'PC': [255, 255, 255]}
+
+    if text in color_table.keys():
+        r, g, b = color_table[text]
     else:
         s = ustr(text)
         hashCode = int(hashlib.sha256(s.encode('utf-8')).hexdigest(), 16)
         r = int((hashCode / 255) % 255)
         g = int((hashCode / 65025) % 255)
         b = int((hashCode / 16581375) % 255)
+
     return QColor(r, g, b, 200)
+
 
 def have_qstring():
     """p3/qt5 get rid of QString wrapper as py3 has native unicode str type"""
     return not (sys.version_info.major >= 3 or QT_VERSION_STR.startswith('5.'))
 
+
 def util_qt_strlistclass():
     return QStringList if have_qstring() else list
 
-def natural_sort(list, key=lambda s:s):
+
+def natural_sort(list, key=lambda s: s):
     """
     Sort the list into natural alphanumeric order.
     """
+
     def get_alphanum_key_func(key):
         convert = lambda text: int(text) if text.isdigit() else text
         return lambda s: [convert(c) for c in re.split('([0-9]+)', key(s))]
+
     sort_key = get_alphanum_key_func(key)
     list.sort(key=sort_key)

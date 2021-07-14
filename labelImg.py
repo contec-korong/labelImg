@@ -257,46 +257,22 @@ class MainWindow(QMainWindow, WindowMixin):
         color1 = action(get_str('boxLineColor'), self.choose_color1,
                         'Ctrl+L', 'color_line', get_str('boxLineColorDetail'))
 
+        create = action(get_str('crtBox'), self.create_shape,
+                        'w', 'new', get_str('crtBoxDetail'), enabled=False)
+
         create_mode = action(get_str('crtBox'), self.set_create_mode,
-                             '', 'new', 'Draw bbox', enabled=False)
+                             'w', 'new', get_str('crtBoxDetail'), enabled=False)
+
+        create_last = action('Create last bbox', self.create_last_shape,
+                             'q', 'new', 'Draw bbox as the same class of last one', enabled=False)
+
         edit_mode = action('&Edit\nRectBox', self.set_edit_mode,
                            'Ctrl+J', 'edit', u'Move and edit Boxs', enabled=False)
 
         show_box_size = action('Show box size', self.show_box_size, 'h', '', 'Show bbox size', enabled=False)
 
-        """
-        shortcut_classes : Shortcut keys for creating labels
-            q : Apartment
-            w : Buildings
-            ` : Plastic house
-            e : Large vehicle
-            r : Small vehicle
-            1 : Soccer field
-            2 : Baseball park
-            3 : Tennis court
-        """
-        # Apartment label
-        create_APT = action('APT', self.create_shape_APT, 'q', 'new', 'Draw APT bbox', enabled=False)
-        # Buildings label
-        create_BD = action('BD', self.create_shape_BD, 'w', 'new', 'Draw BD bbox', enabled=False)
-        # Plastic House label
-        create_PH = action('PH', self.create_shape_PH, '`', 'new', 'Draw PH bbox', enabled=False)
-        # Soccer field label
-        create_SF = action('SF', self.create_shape_SF, '1', 'new', 'Draw SF bbox', enabled=False)
-        # Baseball park label
-        create_BP = action('BP', self.create_shape_BP, '2', 'new', 'Draw BP bbox', enabled=False)
-        # Tennis court label
-        create_TC = action('TC', self.create_shape_TC, '3', 'new', 'Draw TC bbox', enabled=False)
-        # Large vehicle label
-        create_LV = action('LV', self.create_shape_LV, 'e', 'new', 'Draw LV bbox', enabled=False)
-        # Small vehicle label
-        create_SV = action('SV', self.create_shape_SV, 'r', 'new', 'Draw SV bbox', enabled=False)
-
         delete = action(get_str('delBox'), self.delete_selected_shape,
                         's', 'delete', get_str('delBoxDetail'), enabled=False)
-        copy = action(get_str('dupBox'), self.copy_selected_shape,
-                      'Ctrl+D', 'copy', get_str('dupBoxDetail'),
-                      enabled=False)
 
         advanced_mode = action(get_str('advancedMode'), self.toggle_advanced_mode,
                                'Ctrl+Shift+A', 'expert', get_str('advancedModeDetail'),
@@ -376,9 +352,9 @@ class MainWindow(QMainWindow, WindowMixin):
         # Store actions for further handling
         self.actions = Struct(save=save, save_format=save_format, saveAs=save_as, open=open, close=close,
                               resetAll=reset_all, deleteImg=delete_image, lineColor=color1, show_box_size=show_box_size,
-                              create_APT=create_APT, create_BD=create_BD, create_PH=create_PH, create_SF=create_SF, create_BP=create_BP,
-                              create_TC=create_TC, create_LV=create_LV, create_SV=create_SV,
-                              delete=delete, edit=edit, copy=copy,
+                              create=create,
+                              createLast=create_last,
+                              delete=delete, edit=edit,
                               createMode=create_mode, editMode=edit_mode, advancedMode=advanced_mode,
                               shapeLineColor=shape_line_color, shapeFillColor=shape_fill_color,
                               zoom=zoom, zoomIn=zoom_in, zoomOut=zoom_out, zoomOrg=zoom_org,
@@ -386,10 +362,9 @@ class MainWindow(QMainWindow, WindowMixin):
                               zoomActions=zoom_actions,
                               fileMenuActions=(open, open_dir, save, save_as, close, reset_all, quit),
                               beginner=(), advanced=(),
-                              editMenu=(edit, copy, delete, None, color1, self.draw_squares_option),
-                              beginnerContext=(show_box_size, create_APT, create_BD, create_PH, create_SF, create_BP, create_TC,
-                                               create_LV, create_SV, edit, copy, delete),
-                              advancedContext=(create_mode, edit_mode, edit, copy,
+                              editMenu=(edit, delete, None, color1, self.draw_squares_option),
+                              beginnerContext=(show_box_size, create, edit, delete),
+                              advancedContext=(show_box_size, create_mode, edit_mode, edit,
                                                delete, shape_line_color, shape_fill_color),
                               onLoadActive=(close, show_box_size, create_mode, edit_mode),
                               onShapesPresent=(save_as, hide_all, show_all))
@@ -411,7 +386,6 @@ class MainWindow(QMainWindow, WindowMixin):
         self.single_class_mode.setShortcut("Ctrl+Shift+S")
         self.single_class_mode.setCheckable(True)
         self.single_class_mode.setChecked(settings.get(SETTING_SINGLE_CLASS, False))
-        self.lastLabel = None
         # Add option to enable/disable labels being displayed at the top of bounding boxes
         self.display_label_option = QAction(get_str('displayLabel'), self)
         self.display_label_option.setShortcut("Ctrl+Shift+P")
@@ -437,7 +411,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (open, open_dir, change_save_dir, open_next_image, open_prev_image, verify, save,
-                                 save_format, None,
+                                 save_format, None, create, create_last, delete, None,
                                  zoom_in, zoom, zoom_out, fit_window, fit_width)
 
         self.actions.advanced = (open, open_dir, change_save_dir, open_next_image, open_prev_image, save, save_format,
@@ -580,9 +554,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.menus[0].clear()
         add_actions(self.canvas.menus[0], menu)
         self.menus.edit.clear()
-        actions = (self.actions.show_box_size, self.actions.create_APT, self.actions.create_BD, self.actions.create_PH, self.actions.create_SF,
-                   self.actions.create_BP, self.actions.create_TC, self.actions.create_SV, self.actions.create_LV)\
-            if self.beginner() else (self.actions.createMode, self.actions.editMode)
+        actions = (self.actions.show_box_size, self.actions.create, self.actions.createLast) if self.beginner() \
+            else (self.actions.show_box_size, self.actions.createMode, self.actions.editMode)
         add_actions(self.menus.edit, actions + self.actions.editMenu)
 
     def set_beginner(self):
@@ -600,14 +573,8 @@ class MainWindow(QMainWindow, WindowMixin):
     def set_clean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
-        self.actions.create_APT.setEnabled(True)
-        self.actions.create_BD.setEnabled(True)
-        self.actions.create_PH.setEnabled(True)
-        self.actions.create_SF.setEnabled(True)
-        self.actions.create_BP.setEnabled(True)
-        self.actions.create_TC.setEnabled(True)
-        self.actions.create_LV.setEnabled(True)
-        self.actions.create_SV.setEnabled(True)
+        self.actions.create.setEnabled(True)
+        self.actions.createLast.setEnabled(True)
 
     def toggle_actions(self, value=True):
         """Enable/Disable widgets which depend on an opened image."""
@@ -677,61 +644,19 @@ class MainWindow(QMainWindow, WindowMixin):
             shape.show_box_size = self.is_show_box_size
         self.canvas.update()
 
-    def create_shape_APT(self):
-        self.classType = 'APT'
+    def create_shape(self):
         assert self.beginner()
-        self.canvas.label = self.classType
         self.canvas.set_editing(False)
-        self.actions.create_APT.setEnabled(False)
+        self.actions.create.setEnabled(False)
 
-    def create_shape_BD(self):
-        self.classType = 'BD'
+    def create_last_shape(self):
         assert self.beginner()
-        self.canvas.label = self.classType
-        self.canvas.set_editing(False)
-        self.actions.create_BD.setEnabled(False)
-
-    def create_shape_PH(self):
-        self.classType = 'PH'
-        assert self.beginner()
-        self.canvas.label = self.classType
-        self.canvas.set_editing(False)
-        self.actions.create_PH.setEnabled(False)
-
-    def create_shape_SF(self):
-        self.classType = 'SF'
-        assert self.beginner()
-        self.canvas.label = self.classType
-        self.canvas.set_editing(False)
-        self.actions.create_SF.setEnabled(False)
-
-    def create_shape_BP(self):
-        self.classType = 'BP'
-        assert self.beginner()
-        self.canvas.label = self.classType
-        self.canvas.set_editing(False)
-        self.actions.create_BP.setEnabled(False)
-
-    def create_shape_TC(self):
-        self.classType = 'TC'
-        assert self.beginner()
-        self.canvas.label = self.classType
-        self.canvas.set_editing(False)
-        self.actions.create_TC.setEnabled(False)
-
-    def create_shape_LV(self):
-        self.classType = 'LV'
-        assert self.beginner()
-        self.canvas.label = self.classType
-        self.canvas.set_editing(False)
-        self.actions.create_LV.setEnabled(False)
-
-    def create_shape_SV(self):
-        self.classType = 'SV'
-        assert self.beginner()
-        self.canvas.label = self.classType
-        self.canvas.set_editing(False)
-        self.actions.create_SV.setEnabled(False)
+        if self.canvas.shapes:
+            self.canvas.label = self.canvas.shapes[-1].label
+            self.canvas.set_editing(False)
+            self.actions.createLast.setEnabled(False)
+        else:
+            self.create_shape()
 
     def toggle_drawing_sensitive(self, drawing=True):
         """In the middle of drawing, toggling between modes should be disabled."""
@@ -741,18 +666,13 @@ class MainWindow(QMainWindow, WindowMixin):
             print('Cancel creation.')
             self.canvas.set_editing(True)
             self.canvas.restore_cursor()
-            self.actions.create_APT.setEnabled(True)
-            self.actions.create_BD.setEnabled(True)
-            self.actions.create_PH.setEnabled(True)
-            self.actions.create_SF.setEnabled(True)
-            self.actions.create_BP.setEnabled(True)
-            self.actions.create_TC.setEnabled(True)
-            self.actions.create_LV.setEnabled(True)
-            self.actions.create_SV.setEnabled(True)
+            self.actions.create.setEnabled(True)
+            self.actions.createLast.setEnabled(True)
 
     def toggle_draw_mode(self, edit=True):
         self.canvas.set_editing(edit)
         self.actions.createMode.setEnabled(edit)
+        self.actions.createLast.setEnabled(edit)
         self.actions.editMode.setEnabled(not edit)
 
     def set_create_mode(self):
@@ -793,6 +713,7 @@ class MainWindow(QMainWindow, WindowMixin):
         if text is not None:
             item.setText(text)
             item.setBackground(generate_color_by_text(text))
+            self.canvas.label = self.classType
             self.set_dirty()
             self.update_combo_box()
 
@@ -849,7 +770,6 @@ class MainWindow(QMainWindow, WindowMixin):
             except:
                 self.label_list.clearSelection()
         self.actions.delete.setEnabled(selected)
-        self.actions.copy.setEnabled(selected)
         self.actions.edit.setEnabled(selected)
         self.actions.shapeLineColor.setEnabled(selected)
         self.actions.shapeFillColor.setEnabled(selected)
@@ -954,11 +874,6 @@ class MainWindow(QMainWindow, WindowMixin):
             self.error_message(u'Error saving label data', u'<b>%s</b>' % e)
             return False
 
-    def copy_selected_shape(self):
-        self.add_label(self.canvas.copy_selected_shape())
-        # fix copy and delete
-        self.shape_selection_changed(True)
-
     def combo_selection_changed(self, index):
         text = self.combo_box.cb.itemText(index)
         for i in range(self.label_list.count()):
@@ -994,13 +909,12 @@ class MainWindow(QMainWindow, WindowMixin):
 
         position MUST be in global coordinates.
         """
-        # Implement shortcut keys for creating labels
-        if self.classType:
-            text = self.classType
-            # Reset(clear) flag
-            self.classType = ''
+        if not self.actions.create.isEnabled():
+            if len(self.label_hist) > 0:
+                self.label_dialog = LabelDialog(parent=self, list_item=self.label_hist)
+            text = self.label_dialog.pop_up(text=self.prev_label_text)
         else:
-            raise Exception('Label not exists.')
+            text = self.prev_label_text
 
         # Add Chris
         self.diffc_button.setChecked(False)
@@ -1011,14 +925,8 @@ class MainWindow(QMainWindow, WindowMixin):
             self.add_label(shape)
             if self.beginner():  # Switch to edit mode.
                 self.canvas.set_editing(True)
-                self.actions.create_APT.setEnabled(True)
-                self.actions.create_BD.setEnabled(True)
-                self.actions.create_PH.setEnabled(True)
-                self.actions.create_SF.setEnabled(True)
-                self.actions.create_BP.setEnabled(True)
-                self.actions.create_TC.setEnabled(True)
-                self.actions.create_LV.setEnabled(True)
-                self.actions.create_SV.setEnabled(True)
+                self.actions.create.setEnabled(True)
+                self.actions.createLast.setEnabled(True)
             else:
                 self.actions.editMode.setEnabled(True)
             self.set_dirty()
@@ -1026,7 +934,6 @@ class MainWindow(QMainWindow, WindowMixin):
             if text not in self.label_hist:
                 self.label_hist.append(text)
         else:
-            # self.canvas.undoLastLine()
             self.canvas.reset_all_lines()
 
     def scroll_request(self, delta, orientation):
