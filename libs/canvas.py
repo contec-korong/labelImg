@@ -64,11 +64,17 @@ class Canvas(QWidget):
         self.verified = False
         self.draw_square = False
         self.label = None
-        self.bd_limit_size = 50
-        self.limit_size = 10
 
         # initialisation for panning
         self.pan_initial_pos = QPoint()
+
+    def limit_size(self, cat=None):
+        if cat == 'BD':
+            return 150
+        elif cat == 'PH':
+            return 50
+        else:
+            return 10
 
     def set_drawing_color(self, qcolor):
         self.drawing_line_color = qcolor
@@ -162,6 +168,12 @@ class Canvas(QWidget):
                 else:
                     self.line[1] = pos
 
+                if width * height < self.limit_size(self.label):
+                    color = self.drawing_bad_color
+                else:
+                    color = self.drawing_line_color
+
+                self.drawing_rect_color = color
                 self.line.line_color = color
                 self.prev_point = QPointF()
                 self.current.highlight_clear()
@@ -184,6 +196,15 @@ class Canvas(QWidget):
         # Polygon/Vertex moving.
         if Qt.LeftButton & ev.buttons():
             if self.selected_vertex():
+                if self.selected_shape.area < self.limit_size(self.label):
+                    self.drawing_rect_color = self.drawing_bad_color
+                    self.line.line_color = self.drawing_bad_color
+                    self.selected_shape.select_fill_color = self.drawing_bad_fill_color
+                else:
+                    self.drawing_rect_color = self.drawing_rect_color
+                    self.line.line_color = self.drawing_line_color
+                    self.selected_shape.select_fill_color = DEFAULT_SELECT_FILL_COLOR
+
                 self.bounded_move_vertex(pos)
                 self.shapeMoved.emit()
                 self.repaint()
@@ -267,6 +288,13 @@ class Canvas(QWidget):
         elif ev.button() == Qt.LeftButton and self.selected_shape:
             if self.selected_vertex():
                 self.override_cursor(CURSOR_POINT)
+                if self.selected_shape.area < self.limit_size(self.selected_shape.label):
+                    try:
+                        self.parent().window().remove_label(self.selected_shape)
+                        self.shapes.remove(self.selected_shape)
+                        self.update()
+                    except:
+                        pass
             else:
                 self.override_cursor(CURSOR_GRAB)
         elif ev.button() == Qt.LeftButton:
@@ -276,6 +304,14 @@ class Canvas(QWidget):
             else:
                 # pan
                 QApplication.restoreOverrideCursor()
+
+            if len(self.shapes) == 0:
+                return
+
+            if self.shapes[-1].area < self.limit_size(self.shapes[-1].label):
+                self.parent().window().remove_label(self.shapes[-1])
+                self.shapes.remove(self.shapes[-1])
+                self.update()
 
     def end_move(self, copy=False):
         assert self.selected_shape and self.selected_shape_copy
