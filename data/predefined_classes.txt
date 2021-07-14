@@ -1,8 +1,12 @@
-SV
-LV
-PH
+CAR
+TRUCK
+BUS
 BD
 APT
+PH
 SF
 TC
 BP
+BC
+TT
+PC
