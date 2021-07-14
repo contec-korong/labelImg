@@ -301,17 +301,17 @@ class Canvas(QWidget):
             pos = self.transform_pos(ev.pos())
             if self.drawing():
                 self.handle_drawing(pos)
-
-                if len(self.shapes) == 0:
-                    return
-
-                if self.shapes[-1].area < self.limit_size(self.shapes[-1].label):
-                    self.parent().window().remove_label(self.shapes[-1])
-                    self.shapes.remove(self.shapes[-1])
-                    self.update()
             else:
                 # pan
                 QApplication.restoreOverrideCursor()
+
+            if len(self.shapes) == 0:
+                return
+
+            if self.shapes[-1].area < self.limit_size(self.shapes[-1].label):
+                self.parent().window().remove_label(self.shapes[-1])
+                self.shapes.remove(self.shapes[-1])
+                self.update()
 
     def end_move(self, copy=False):
         assert self.selected_shape and self.selected_shape_copy
