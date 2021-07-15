@@ -80,7 +80,7 @@ def format_shortcut(text):
 def generate_color_by_text(text):
     # CLASS guideline: https://docs.google.com/document/d/1xSnEFL0XHnNkwhOgClSlMNn7XvdES2bGeo2iZlQ8924/edit
     color_table = {'CAR': [255, 0, 102], 'TRUCK': [170, 155, 255], 'BUS': [0, 51, 255], 'BD': [0, 204, 255],
-                   'APT': [255, 204, 102], 'PH': [0, 150, 150], 'SF': [0, 204, 0], 'TC': [255, 255, 51],
+                   'APT': [255, 204, 102], 'PH': [204, 255, 204], 'SF': [0, 204, 0], 'TC': [255, 255, 51],
                    'BP': [153, 153, 102], 'BC': [195, 60, 60], 'TT': [250, 255, 190], 'PC': [255, 255, 255]}
 
     if text in color_table.keys():

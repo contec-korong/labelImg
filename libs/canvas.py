@@ -70,7 +70,7 @@ class Canvas(QWidget):
 
     def limit_size(self, cat=None):
         if cat == 'BD':
-            return 150
+            return 50
         elif cat == 'PH':
             return 50
         else:

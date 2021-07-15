@@ -263,13 +263,23 @@ class MainWindow(QMainWindow, WindowMixin):
         create_mode = action(get_str('crtBox'), self.set_create_mode,
                              'w', 'new', get_str('crtBoxDetail'), enabled=False)
 
-        create_last = action('Create last bbox', self.create_last_shape,
-                             'q', 'new', 'Draw bbox as the same class of last one', enabled=False)
-
         edit_mode = action('&Edit\nRectBox', self.set_edit_mode,
                            'Ctrl+J', 'edit', u'Move and edit Boxs', enabled=False)
 
         show_box_size = action('Show box size', self.show_box_size, 'h', '', 'Show bbox size', enabled=False)
+
+        create_APT = action('APT', self.create_shape_APT, 'q', 'new', 'Draw APT bbox', enabled=False)
+        create_BD = action('BD', self.create_shape_BD, 'w', 'new', 'Draw BD bbox', enabled=False)
+        create_CAR = action('CAR', self.create_shape_CAR, 'e', 'new', 'Draw CAR bbox', enabled=False)
+        create_TRUCK = action('TRUCK', self.create_shape_TRUCK, 'r', 'new', 'Draw TRUCK bbox', enabled=False)
+        create_BUS = action('BUS', self.create_shape_BUS, 't', 'new', 'Draw BUS bbox', enabled=False)
+        create_PH = action('PH', self.create_shape_PH, '`', 'new', 'Draw PH bbox', enabled=False)
+        create_SF = action('SF', self.create_shape_SF, '1', 'new', 'Draw SF bbox', enabled=False)
+        create_BP = action('BP', self.create_shape_BP, '2', 'new', 'Draw BP bbox', enabled=False)
+        create_TC = action('TC', self.create_shape_TC, '3', 'new', 'Draw TC bbox', enabled=False)
+        create_BC = action('BC', self.create_shape_BC, '4', 'new', 'Draw BC bbox', enabled=False)
+        create_PC = action('PC', self.create_shape_PC, '5', 'new', 'Draw PC bbox', enabled=False)
+        create_TT = action('TT', self.create_shape_TT, '6', 'new', 'Draw TT bbox', enabled=False)
 
         delete = action(get_str('delBox'), self.delete_selected_shape,
                         's', 'delete', get_str('delBoxDetail'), enabled=False)
@@ -352,8 +362,9 @@ class MainWindow(QMainWindow, WindowMixin):
         # Store actions for further handling
         self.actions = Struct(save=save, save_format=save_format, saveAs=save_as, open=open, close=close,
                               resetAll=reset_all, deleteImg=delete_image, lineColor=color1, show_box_size=show_box_size,
-                              create=create,
-                              createLast=create_last,
+                              create_APT=create_APT, create_BD=create_BD, create_PH=create_PH, create_SF=create_SF,
+                              create_BP=create_BP, create_TT=create_TT, create_BC=create_BC, create_PC=create_PC,
+                              create_TC=create_TC, create_BUS=create_BUS, create_CAR=create_CAR, create_TRUCK=create_TRUCK,
                               delete=delete, edit=edit,
                               createMode=create_mode, editMode=edit_mode, advancedMode=advanced_mode,
                               shapeLineColor=shape_line_color, shapeFillColor=shape_fill_color,
@@ -363,7 +374,7 @@ class MainWindow(QMainWindow, WindowMixin):
                               fileMenuActions=(open, open_dir, save, save_as, close, reset_all, quit),
                               beginner=(), advanced=(),
                               editMenu=(edit, delete, None, color1, self.draw_squares_option),
-                              beginnerContext=(show_box_size, create, edit, delete),
+                              beginnerContext=(show_box_size, edit, delete),
                               advancedContext=(show_box_size, create_mode, edit_mode, edit,
                                                delete, shape_line_color, shape_fill_color),
                               onLoadActive=(close, show_box_size, create_mode, edit_mode),
@@ -411,7 +422,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (open, open_dir, change_save_dir, open_next_image, open_prev_image, verify, save,
-                                 save_format, None, create, create_last, delete, None,
+                                 save_format, None, delete, None,
                                  zoom_in, zoom, zoom_out, fit_window, fit_width)
 
         self.actions.advanced = (open, open_dir, change_save_dir, open_next_image, open_prev_image, save, save_format,
@@ -554,8 +565,13 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.menus[0].clear()
         add_actions(self.canvas.menus[0], menu)
         self.menus.edit.clear()
-        actions = (self.actions.show_box_size, self.actions.create, self.actions.createLast) if self.beginner() \
-            else (self.actions.show_box_size, self.actions.createMode, self.actions.editMode)
+        if self.beginner():
+            actions = (self.actions.show_box_size, self.actions.create_CAR, self.actions.create_BUS, self.actions.create_TRUCK,
+                       self.actions.create_BD, self.actions.create_APT, self.actions.create_PH,
+                       self.actions.create_SF, self.actions.create_BP, self.actions.create_TC, self.actions.create_BC,
+                       self.actions.create_PC, self.actions.create_TT)
+        else:
+            actions = (self.actions.show_box_size, self.actions.createMode, self.actions.editMode)
         add_actions(self.menus.edit, actions + self.actions.editMenu)
 
     def set_beginner(self):
@@ -573,8 +589,19 @@ class MainWindow(QMainWindow, WindowMixin):
     def set_clean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
-        self.actions.create.setEnabled(True)
-        self.actions.createLast.setEnabled(True)
+        self.actions.create_APT.setEnabled(True)
+        self.actions.create_BD.setEnabled(True)
+        self.actions.create_PH.setEnabled(True)
+        self.actions.create_SF.setEnabled(True)
+        self.actions.create_BP.setEnabled(True)
+        self.actions.create_TC.setEnabled(True)
+        self.actions.create_BC.setEnabled(True)
+        self.actions.create_CAR.setEnabled(True)
+        self.actions.create_BUS.setEnabled(True)
+        self.actions.create_TRUCK.setEnabled(True)
+        self.actions.create_TT.setEnabled(True)
+        self.actions.create_PC.setEnabled(True)
+
 
     def toggle_actions(self, value=True):
         """Enable/Disable widgets which depend on an opened image."""
@@ -649,14 +676,90 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.set_editing(False)
         self.actions.create.setEnabled(False)
 
-    def create_last_shape(self):
+    def create_shape_APT(self):
+        self.classType = 'APT'
         assert self.beginner()
-        if self.canvas.shapes:
-            self.canvas.label = self.canvas.shapes[-1].label
-            self.canvas.set_editing(False)
-            self.actions.createLast.setEnabled(False)
-        else:
-            self.create_shape()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_APT.setEnabled(False)
+
+    def create_shape_BD(self):
+        self.classType = 'BD'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_BD.setEnabled(False)
+
+    def create_shape_PH(self):
+        self.classType = 'PH'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_PH.setEnabled(False)
+
+    def create_shape_SF(self):
+        self.classType = 'SF'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_SF.setEnabled(False)
+
+    def create_shape_BP(self):
+        self.classType = 'BP'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_BP.setEnabled(False)
+
+    def create_shape_BC(self):
+        self.classType = 'BC'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_BC.setEnabled(False)
+
+    def create_shape_TC(self):
+        self.classType = 'TC'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_TC.setEnabled(False)
+
+    def create_shape_CAR(self):
+        self.classType = 'CAR'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_CAR.setEnabled(False)
+
+    def create_shape_BUS(self):
+        self.classType = 'BUS'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_BUS.setEnabled(False)
+
+    def create_shape_TRUCK(self):
+        self.classType = 'TRUCK'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_TRUCK.setEnabled(False)
+
+    def create_shape_TT(self):
+        self.classType = 'TT'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_TT.setEnabled(False)
+
+    def create_shape_PC(self):
+        self.classType = 'PC'
+        assert self.beginner()
+        self.canvas.label = self.classType
+        self.canvas.set_editing(False)
+        self.actions.create_PC.setEnabled(False)
+
 
     def toggle_drawing_sensitive(self, drawing=True):
         """In the middle of drawing, toggling between modes should be disabled."""
@@ -666,13 +769,22 @@ class MainWindow(QMainWindow, WindowMixin):
             print('Cancel creation.')
             self.canvas.set_editing(True)
             self.canvas.restore_cursor()
-            self.actions.create.setEnabled(True)
-            self.actions.createLast.setEnabled(True)
+            self.actions.create_APT.setEnabled(True)
+            self.actions.create_BD.setEnabled(True)
+            self.actions.create_PH.setEnabled(True)
+            self.actions.create_SF.setEnabled(True)
+            self.actions.create_BP.setEnabled(True)
+            self.actions.create_TC.setEnabled(True)
+            self.actions.create_BC.setEnabled(True)
+            self.actions.create_CAR.setEnabled(True)
+            self.actions.create_TRUCK.setEnabled(True)
+            self.actions.create_BUS.setEnabled(True)
+            self.actions.create_TT.setEnabled(True)
+            self.actions.create_PC.setEnabled(True)
 
     def toggle_draw_mode(self, edit=True):
         self.canvas.set_editing(edit)
         self.actions.createMode.setEnabled(edit)
-        self.actions.createLast.setEnabled(edit)
         self.actions.editMode.setEnabled(not edit)
 
     def set_create_mode(self):
@@ -906,15 +1018,13 @@ class MainWindow(QMainWindow, WindowMixin):
     # Callback functions:
     def new_shape(self):
         """Pop-up and give focus to the label editor.
-
         position MUST be in global coordinates.
         """
-        if not self.actions.create.isEnabled():
-            if len(self.label_hist) > 0:
-                self.label_dialog = LabelDialog(parent=self, list_item=self.label_hist)
-            text = self.label_dialog.pop_up(text=self.prev_label_text)
+        if self.classType:
+            text = self.classType
+            self.classType = ''
         else:
-            text = self.prev_label_text
+            raise Exception('Label not exists.')
 
         # Add Chris
         self.diffc_button.setChecked(False)
@@ -925,8 +1035,18 @@ class MainWindow(QMainWindow, WindowMixin):
             self.add_label(shape)
             if self.beginner():  # Switch to edit mode.
                 self.canvas.set_editing(True)
-                self.actions.create.setEnabled(True)
-                self.actions.createLast.setEnabled(True)
+                self.actions.create_APT.setEnabled(True)
+                self.actions.create_BD.setEnabled(True)
+                self.actions.create_PH.setEnabled(True)
+                self.actions.create_SF.setEnabled(True)
+                self.actions.create_BP.setEnabled(True)
+                self.actions.create_TC.setEnabled(True)
+                self.actions.create_BC.setEnabled(True)
+                self.actions.create_CAR.setEnabled(True)
+                self.actions.create_TRUCK.setEnabled(True)
+                self.actions.create_BUS.setEnabled(True)
+                self.actions.create_TT.setEnabled(True)
+                self.actions.create_PC.setEnabled(True)
             else:
                 self.actions.editMode.setEnabled(True)
             self.set_dirty()
