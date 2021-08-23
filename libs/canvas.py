@@ -359,7 +359,7 @@ class Canvas(QWidget):
             init_pos = self.current[0]
             min_x = init_pos.x()
             min_y = init_pos.y()
-            target_pos = QPointF(256.0 + min_x, 256.0 + min_y)
+            target_pos = QPointF(512.0 + min_x, 512.0 + min_y)
             max_x = target_pos.x()
             max_y = target_pos.y()
             self.current.add_point(QPointF(max_x, min_y))
